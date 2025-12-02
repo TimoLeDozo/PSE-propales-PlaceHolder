@@ -22,8 +22,6 @@ Nous avons pivoté vers une approche standardisée industrielle : les **Placehol
 * ✅ **Flexibilité :** Le template est un document lisible, propre, où les balises se fondent dans le texte.
 * ✅ **Puissance :** Permet l'injection d'images (logos) en Base64 et la gestion de blocs conditionnels.
 
-Ce dépôt contient donc la **version ultime**, fusionnant l'interface utilisateur avancée de la B1 avec le moteur robuste de la B2.
-
 ---
 
 ## ✨ Fonctionnalités Clés
@@ -74,4 +72,5 @@ Le projet est conçu pour être "Standalone" (facile à déployer) :
 ---
 
 *Projet maintenu par [TimoLeDozo](https://github.com/TimoLeDozo).*
+
 
