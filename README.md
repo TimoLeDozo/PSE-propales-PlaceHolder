@@ -6,17 +6,17 @@ Ce projet est une **Web App Google Apps Script** autonome destinée au Pôle Ser
 
 ---
 
-## 📜 Genèse du projet : Pourquoi l'Hypothèse B2 ?
+## 📜 Genèse du projet : Pourquoi la solution placeHolder ? 
 
-Ce projet est né d'un constat technique critique sur la version précédente (**Hypothèse B1**).
+Ce projet est né d'un constat technique critique sur la version précédente (Color Mapping).
 
-### Le problème de la "B1" (Color Mapping)
+### Le problème de la Solution (Color Mapping)
 Initialement, le moteur de génération reposait sur une détection par **couleur de fond** (ex: le script cherchait du texte surligné en `#FFFF00` pour le remplacer par le "Nom de l'entreprise").
 * ❌ **Fragilité :** Si un utilisateur changeait la nuance de jaune d'un pixel, le script échouait.
 * ❌ **Maintenance :** Le template ressemblait à un arlequin, difficile à lire pour un humain.
 * ❌ **Rigidité :** Impossible de gérer proprement des insertions complexes (images, tableaux dynamiques).
 
-### La solution "B2" (Placeholders)
+### La solution (Placeholders)
 Nous avons pivoté vers une approche standardisée industrielle : les **Placeholders Textuels**.
 * ✅ **Robustesse :** Le script cherche des balises explicites comme `{{entrepriseNom}}` ou `{{budgetTotal}}`.
 * ✅ **Flexibilité :** Le template est un document lisible, propre, où les balises se fondent dans le texte.
@@ -74,3 +74,4 @@ Le projet est conçu pour être "Standalone" (facile à déployer) :
 ---
 
 *Projet maintenu par [TimoLeDozo](https://github.com/TimoLeDozo).*
+
