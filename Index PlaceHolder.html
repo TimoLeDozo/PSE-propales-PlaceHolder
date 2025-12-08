@@ -253,7 +253,7 @@
               <img class="console-logo" src="https://upload.wikimedia.org/wikipedia/fr/thumb/1/1d/Logo_ICAM_-_2008.svg/1200px-Logo_ICAM_-_2008.svg.png" alt="Icam">
             </div>
             <div class="console-header-text">
-              <h4 style="margin:0; font-size:0.9rem; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:2px;">Générateur Propale V2 (PlaceHolder)</h4>
+              <h4 style="margin:0; font-size:0.9rem; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:2px;">Générateur Propale V2 (Corrigé)</h4>
               <h2>Console Neural · Génération de propale</h2>
               <p>Renseignez les zones clés. Toutes les informations sont transmises à Apps Script qui orchestre la copie du template Google Docs, le remplissage des zones et l'appel à DeepSeek.</p>
             </div>
@@ -286,10 +286,6 @@
                 <div class="field">
                   <label for="f_dureeSemaines">DURÉE (SEMAINES)</label>
                   <input type="number" id="f_dureeSemaines" value="24">
-                </div>
-                <div class="field grid-span-2">
-                  <label for="f_dureeProjet">DURÉE TEXTE</label>
-                  <input type="text" id="f_dureeProjet" placeholder="Ex: 6 mois">
                 </div>
               </div>
             </div>
@@ -632,7 +628,6 @@
         entrepriseNom: entreprise,
         codeProjet: document.getElementById('f_codeProjet').value,
         dateDebut: document.getElementById('f_dateDebut').value,
-        dureeProjet: document.getElementById('f_dureeProjet').value,
         nbEquipes: document.getElementById('f_nbEquipes').value,
         dureeSemaines: document.getElementById('f_dureeSemaines').value,
         entrepriseLogo: document.getElementById('f_entrepriseLogo').value,
