@@ -76,6 +76,113 @@
     .nav-links a { padding: 12px 18px; border-radius: 18px; font-size: 0.92rem; color: rgba(255, 255, 255, 0.88); transition: 0.3s; position: relative; }
     .nav-links a:hover, .nav-links a.active { color: #fff; background: rgba(255,255,255,0.1); }
 
+    /* --- NEW HERO SECTION --- */
+    .ops-hero-section {
+      text-align: center;
+      padding: 160px 20px 80px;
+      position: relative;
+    }
+
+    .ops-hero-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      color: #e0a3ff;
+      margin-bottom: 24px;
+      backdrop-filter: blur(10px);
+    }
+
+    .ops-hero-title {
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      background: linear-gradient(135deg, #ffffff 0%, #a5a5a5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.02em;
+    }
+
+    .ops-hero-subtitle {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.65);
+      max-width: 700px;
+      margin: 0 auto 60px;
+    }
+
+    .ops-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto 60px;
+    }
+
+    .ops-stat-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 24px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .ops-stat-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .ops-stat-value {
+      display: block;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .ops-stat-label {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .ops-cta-group {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .ops-btn-primary {
+      background: #fff;
+      color: #000;
+      padding: 16px 32px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: transform 0.2s ease;
+    }
+
+    .ops-btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      padding: 16px 32px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 1rem;
+      backdrop-filter: blur(10px);
+      transition: background 0.2s ease;
+    }
+
+    .ops-btn-primary:hover, .ops-btn-secondary:hover {
+      transform: scale(1.05);
+    }
+
     /* --- LAYOUT GLOBAL --- */
     main { padding-top: 140px; padding-bottom: 80px; }
     .console-section { position: relative; padding: 160px 20px 140px; }
@@ -239,11 +346,41 @@
     <ul class="nav-links">
       <li><a href="#" class="active">Console</a></li>
       <li><a href="#showcase">Matrix</a></li>
-      <li><a href="#">GitHub</a></li>
+      <li><a href="https://github.com/TimoLeDozo/PSE-propales-PlaceHolder.git">GitHub</a></li>
     </ul>
   </header>
 
   <main>
+    <section class="ops-hero-section">
+      <span class="ops-hero-badge">✨ PROPALES INSTANTANÉES</span>
+      <h1 class="ops-hero-title">NEURAL PROPALE<br>ENGINE</h1>
+      <p class="ops-hero-subtitle">Alimentez DeepSeek avec vos contextes clients et générez des propositions commerciales d'une rigueur Icam en quelques secondes.</p>
+
+      <div class="ops-stats-grid">
+        <div class="ops-stat-card">
+          <span class="ops-stat-value">60s</span>
+          <span class="ops-stat-label">/ DOCUMENT PRÊT</span>
+        </div>
+        <div class="ops-stat-card">
+          <span class="ops-stat-value">100%</span>
+          <span class="ops-stat-label">COLOR MAPPING</span>
+        </div>
+        <div class="ops-stat-card">
+          <span class="ops-stat-value">DeepSeek</span>
+          <span class="ops-stat-label">ACCESS V3</span>
+        </div>
+        <div class="ops-stat-card">
+          <span class="ops-stat-value">1 Clic</span>
+          <span class="ops-stat-label">GÉNÉRATION DOC</span>
+        </div>
+      </div>
+
+      <div class="ops-cta-group">
+        <a href="#console" class="ops-btn-primary" onclick="document.querySelector('.console-section').scrollIntoView({behavior: 'smooth'})">INITIER LA CONSOLE</a>
+        <a href="#showcase" class="ops-btn-secondary">DÉCOUVRIR LES FLUX</a>
+      </div>
+    </section>
+
     <section class="console-section">
       <div class="console-wrapper">
         
@@ -464,7 +601,7 @@
 
               <div style="margin-top:30px;">
                 <h4 style="font-size:0.8rem; color:rgba(255,255,255,0.6); text-transform:uppercase; margin-bottom:10px;">PRÉVISUALISATION</h4>
-                <a href="#" class="cost-log-link" id="costLogBtn">📊 Journal des coûts</a>
+                <a href="https://docs.google.com/spreadsheets/d/1OsDoqbwu1zrC0SgaMOwRbOJRTUm0QDsbJMSlpaFUwOk/edit?gid=0#gid=0" class="cost-log-link" id="costLogBtn" target="_blank">📊 Journal des coûts</a>
                 <pre class="result-preview" id="consoleLog">Système prêt.</pre>
               </div>
 
