@@ -43,6 +43,7 @@ function generateFromForm(formData) {
     // Normalisation des dates/codes
     if (!formData.dateDebut) formData.dateDebut = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "MMMM yyyy");
     if (!formData.codeProjet) formData.codeProjet = "DRAFT_" + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "MMdd");
+    if (!formData.dureeProjet) formData.dureeProjet = (formData.dureeSemaines || 24) + " semaines";
 
     // 2. Appel IA Expert (Logique B2 avec OCR)
     let aiData = {};
@@ -157,7 +158,7 @@ function callDeepSeekExpert_(form) {
     PROBLÈME: ${form.ia_probleme}
     SOLUTION: ${form.ia_solution}
     OBJECTIFS: ${form.ia_objectifs}
-    DURÉE: ${form.dureeProjet}
+    DURÉE: ${form.dureeProjet} (${form.dureeSemaines} semaines)
 
     CONTEXTE DOCUMENTAIRE:
     ${docsContext}
