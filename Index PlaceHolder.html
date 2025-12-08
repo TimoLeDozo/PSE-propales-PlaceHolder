@@ -3,345 +3,224 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Console Neural · MSI Propales B2</title>
+  <title>MSI Propales · Neural Console B2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
   <style>
-    /* --- VARIABLES & RESET --- */
+    /* --- DESIGN SYSTEM EXACT V1 --- */
     :root {
-      --bg-deep: #050505;
-      --glass-panel: rgba(255, 255, 255, 0.03);
-      --glass-border: rgba(255, 255, 255, 0.08);
-      --glass-blur: 20px;
-      
-      --input-bg: rgba(0, 0, 0, 0.4);
-      --input-border: rgba(255, 255, 255, 0.1);
-      
-      --accent-primary: #e0a3ff;
-      --accent-secondary: #ff69b4;
-      --accent-tertiary: #00ffff;
-      
-      --text-main: #ffffff;
-      --text-muted: rgba(255, 255, 255, 0.5);
-      
-      --card-radius: 24px;
-      --input-radius: 12px;
+      color-scheme: dark;
+      --gradient-primary: linear-gradient(135deg, #e0a3ff, #ff69b4, #00ffff);
+      --glass-bg: rgba(255, 255, 255, 0.06);
+      --glass-border: rgba(255, 255, 255, 0.18);
+      --glass-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+      --color-border: rgba(255, 255, 255, 0.16);
+      --color-text: rgba(255, 255, 255, 0.94);
+      --color-text-soft: rgba(255, 255, 255, 0.75);
+      --color-text-muted: rgba(255, 255, 255, 0.55);
+      --focus-ring: 0 0 0 3px rgba(0, 255, 255, 0.25);
+      --transition-base: 0.3s ease;
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
     body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg-deep);
-      color: var(--text-main);
-      min-height: 100vh;
-      overflow-x: hidden;
-      line-height: 1.5;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #050505; color: #f2e7ff;
+      overflow-x: hidden; min-height: 100vh; line-height: 1.6;
     }
+    a { color: inherit; text-decoration: none; }
 
-    /* --- BACKGROUND NEURAL (Tiré du Template) --- */
+    /* --- BACKGROUND ANIMÉ & FORMES (RÉTABLIS) --- */
     .neural-background {
       position: fixed; inset: 0; z-index: -3;
-      background: radial-gradient(circle at 15% 85%, rgba(75, 0, 130, 0.4) 0%, transparent 50%),
-                  radial-gradient(circle at 85% 15%, rgba(139, 37, 99, 0.4) 0%, transparent 50%),
-                  linear-gradient(135deg, #050505 0%, #1a0b2e 100%);
+      background: radial-gradient(circle at 15% 85%, rgba(75, 0, 130, 0.7) 0%, transparent 55%),
+        radial-gradient(circle at 85% 15%, rgba(139, 37, 99, 0.8) 0%, transparent 55%),
+        radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.22) 0%, transparent 65%),
+        linear-gradient(135deg, #050505 0%, #12051c 100%);
+      animation: backgroundPulse 16s ease-in-out infinite;
+    }
+    @keyframes backgroundPulse {
+      0%, 100% { filter: brightness(0.92) saturate(1.4); }
+      40% { filter: brightness(1.04) saturate(1.55) hue-rotate(10deg); }
+      70% { filter: brightness(0.98) saturate(1.6) hue-rotate(-8deg); }
     }
     
-    /* Formes flottantes */
-    .geometric-shapes { position: fixed; inset: 0; z-index: -2; pointer-events: none; }
-    .shape { position: absolute; border: 1px solid rgba(0, 255, 255, 0.15); animation: float 20s infinite linear; }
-    .shape:nth-child(1) { width: 150px; height: 150px; left: 10%; top: 20%; border-radius: 30px; border-color: rgba(224, 163, 255, 0.2); }
-    .shape:nth-child(2) { width: 80px; height: 80px; right: 15%; top: 60%; border-radius: 50%; border-color: rgba(255, 105, 180, 0.2); animation-duration: 25s; }
-    @keyframes float { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-100px) rotate(360deg); } }
-
-    /* --- LAYOUT --- */
-    .container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 40px 20px;
-      display: grid;
-      grid-template-columns: 1fr 380px; /* Layout EXACT des screenshots */
-      gap: 30px;
+    .geometric-shapes { position: fixed; inset: 0; z-index: -2; overflow: hidden; pointer-events: none; }
+    .shape {
+      position: absolute; border: 1px solid rgba(0, 255, 255, 0.25);
+      animation: floatShape 22s linear infinite; filter: drop-shadow(0 0 18px rgba(224, 163, 255, 0.35));
+    }
+    .shape:nth-child(1) { width: 110px; height: 110px; left: 8%; animation-delay: -2s; border-radius: 28px; }
+    .shape:nth-child(2) { width: 70px; height: 70px; left: 76%; animation-delay: -9s; border-radius: 50%; border-color: rgba(255, 105, 180, 0.35); }
+    .shape:nth-child(3) { width: 90px; height: 90px; left: 30%; animation-delay: -13s; transform: rotate(45deg); }
+    .shape:nth-child(4) { width: 150px; height: 150px; left: 58%; animation-delay: -18s; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); background: linear-gradient(45deg, rgba(255, 0, 128, 0.12), transparent); }
+    @keyframes floatShape {
+      from { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      15%, 85% { opacity: 1; }
+      to { transform: translateY(-120px) rotate(360deg); opacity: 0; }
     }
 
     /* --- HEADER --- */
-    .header-section {
-      grid-column: 1 / -1;
-      text-align: center;
-      margin-bottom: 60px;
-      margin-top: 40px;
+    header {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      width: min(1200px, 94vw); padding: 18px 30px; border-radius: 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(18, 18, 18, 0.65); border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: var(--glass-shadow); backdrop-filter: blur(26px); z-index: 200;
+      transition: all 0.4s ease;
     }
-    .logo-container {
-      display: inline-block;
-      background: rgba(255,255,255,0.95);
-      padding: 10px 20px;
-      border-radius: 16px;
-      margin-bottom: 25px;
-      box-shadow: 0 0 30px rgba(255,255,255,0.15);
-    }
-    .logo-container img { height: 45px; display: block; }
+    header.scrolled { background: rgba(12, 12, 12, 0.85); border-color: rgba(224, 163, 255, 0.25); }
+    .logo { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: 0.28em; font-size: 0.95rem; text-transform: uppercase; color: #fefbff; }
+    .icam-logo-custom { background-color: white; padding: 5px 10px; border-radius: 8px; height: 40px; }
+    .nav-links { list-style: none; display: flex; gap: 10px; align-items: center; }
+    .nav-links a { padding: 12px 18px; border-radius: 18px; font-size: 0.92rem; color: rgba(255, 255, 255, 0.88); transition: 0.3s; position: relative; }
+    .nav-links a:hover, .nav-links a.active { color: #fff; background: rgba(255,255,255,0.1); }
+
+    /* --- LAYOUT GLOBAL --- */
+    main { padding-top: 140px; padding-bottom: 80px; }
+    .console-section { position: relative; padding: 160px 20px 140px; }
+    .console-wrapper { width: min(1100px, 94vw); margin: 0 auto; display: grid; gap: 40px; }
     
-    h1 {
-      font-size: 3.5rem;
-      font-weight: 800;
-      margin: 0 0 15px 0;
-      background: linear-gradient(to right, #fff, #e0a3ff);
-      -webkit-background-clip: text;
-      color: transparent;
-      letter-spacing: -1px;
-    }
-    .subtitle {
-      font-size: 1rem;
-      color: var(--text-muted);
-      max-width: 600px;
-      margin: 0 auto;
-      font-weight: 300;
+    .console-header { text-align: center; }
+    .console-header-top { display: flex; align-items: flex-start; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 18px; }
+    .console-logo-wrapper { padding-top: 10px; }
+    .console-logo { width: 130px; height: 75px; object-fit: contain; filter: drop-shadow(0 0 14px rgba(224, 163, 255, 0.6)); background: #fff; padding: 10px; border-radius: 12px; }
+    .console-header h2 { font-size: clamp(2.2rem, 4vw, 3.1rem); margin-bottom: 16px; letter-spacing: -0.01em; }
+    .console-header p { color: rgba(255, 255, 255, 0.7); max-width: 680px; margin: 0 auto; }
+
+    .console-layout { display: grid; gap: 32px; align-items: start; }
+    @media (min-width: 1100px) {
+      .console-layout { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); }
+      .results-column { position: sticky; top: 140px; }
     }
 
-    /* --- CARDS (Panneaux) --- */
-    .card {
-      background: var(--glass-panel);
-      border: 1px solid var(--glass-border);
-      backdrop-filter: blur(var(--glass-blur));
-      border-radius: var(--card-radius);
-      padding: 35px;
-      margin-bottom: 30px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-      position: relative;
-      overflow: hidden;
+    /* --- PANELS (GLASSMORPHISM) --- */
+    .glass-panel {
+      background: var(--glass-bg); border: 1px solid var(--glass-border);
+      border-radius: 28px; padding: 34px; box-shadow: var(--glass-shadow);
+      backdrop-filter: blur(22px);
     }
+    .panel-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 24px; letter-spacing: 0.04em; display: flex; align-items: center; gap: 10px; color: #fff; }
     
-    /* Effet de lueur sur les cards */
-    .card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 25px;
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #fff;
-    }
-    .icon-emoji { font-size: 1.4rem; }
-
-    /* --- FORM STYLES --- */
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-    .form-group { display: flex; flex-direction: column; gap: 8px; }
-    .full-width { grid-column: 1 / -1; }
-
-    label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-weight: 700;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px 22px; }
+    .field.grid-span-2 { grid-column: span 2; }
+    
+    .field-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .field-actions { display: flex; align-items: center; gap: 10px; }
+    
+    label { display: block; font-size: 0.78rem; letter-spacing: 0.14em; color: rgba(255, 255, 255, 0.65); text-transform: uppercase; }
+    
     input, textarea, select {
-      background: var(--input-bg);
-      border: 1px solid var(--input-border);
-      border-radius: var(--input-radius);
-      padding: 16px;
-      color: #fff;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem;
-      transition: 0.3s ease;
-      width: 100%;
+      width: 100%; padding: 14px 16px; border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(6, 6, 6, 0.75);
+      color: #ffffff; font-size: 0.95rem; font-weight: 500; transition: border 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+      min-height: 52px; font-family: inherit;
     }
-    textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
-
+    textarea { resize: vertical; min-height: 120px; }
     input:focus, textarea:focus {
-      outline: none;
-      border-color: rgba(224, 163, 255, 0.5);
-      background: rgba(0,0,0,0.6);
-      box-shadow: 0 0 0 4px rgba(224, 163, 255, 0.1);
+      outline: none; border-color: rgba(0, 255, 255, 0.6);
+      box-shadow: 0 0 0 3px rgba(0, 255, 255, 0.25); background: rgba(12, 12, 12, 0.9);
     }
 
-    /* Input placeholders styling to match screenshots */
-    ::placeholder { color: rgba(255,255,255,0.25); }
+    /* --- BOUTONS DICTER --- */
+    .dictation-button {
+      display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
+      border-radius: 999px; border: 1px solid rgba(0, 255, 255, 0.4);
+      background: rgba(0, 255, 255, 0.12); color: #00ffff; font-size: 0.75rem;
+      font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .dictation-button:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0, 255, 255, 0.25); }
+    .dictation-button.is-active { background: rgba(0, 255, 200, 0.3); color: #041014; border-color: rgba(0, 255, 200, 0.7); }
+    .dict-status { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(0, 255, 255, 0.75); }
 
-    /* --- ACTION BUTTONS (Dicter) --- */
-    .btn-dictate {
-      background: rgba(0, 255, 255, 0.1);
-      color: #00ffff;
-      border: 1px solid rgba(0, 255, 255, 0.3);
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 0.65rem;
-      font-weight: 700;
-      cursor: pointer;
-      text-transform: uppercase;
-      transition: 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 5px;
+    /* --- UPLOAD ZONE --- */
+    .field input[type="file"] { border-style: dashed; border-color: rgba(255, 255, 255, 0.2); padding: 16px; cursor: pointer; background: rgba(6, 6, 6, 0.7); }
+    .field input[type="file"]::file-selector-button {
+      background: rgba(255, 255, 255, 0.12); border: none; border-radius: 10px; color: #fff;
+      font-weight: 600; padding: 10px 16px; margin-right: 12px; cursor: pointer;
     }
-    .btn-dictate:hover {
-      background: rgba(0, 255, 255, 0.2);
-      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    .files-hint { font-size: 0.78rem; color: rgba(255, 255, 255, 0.55); margin-top: 8px; }
+    .attachments-list { list-style: none; margin-top: 12px; display: grid; gap: 8px; padding: 0; }
+    .attachment-item {
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(255, 255, 255, 0.08); padding: 8px 12px; border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.85rem; color: rgba(255, 255, 255, 0.9);
     }
-    .status-text { font-size: 0.65rem; color: rgba(255,255,255,0.3); }
 
-    /* --- SIDEBAR (PILOTAGE) --- */
-    .sidebar { position: sticky; top: 30px; }
-    
-    .pilotage-card {
-      padding: 0; /* Header is distinct */
-      background: rgba(15, 15, 20, 0.6);
-      backdrop-filter: blur(30px);
+    /* --- BOUTON PRINCIPAL --- */
+    .actions { text-align: center; margin-top: 20px; }
+    .action-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
+    #btnGenerate {
+      background: var(--gradient-primary); color: #050505; border: none;
+      border-radius: 999px; padding: 18px 34px; font-weight: 700; font-size: 0.95rem;
+      letter-spacing: 0.12em; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.55);
     }
-    
-    .pilotage-header {
-      background: #000000;
-      padding: 25px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      border-radius: var(--card-radius) var(--card-radius) 0 0;
-    }
-    .pilotage-title {
-      font-size: 0.9rem;
-      font-weight: 800;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-    .pilotage-subtitle { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
+    #btnGenerate:hover { transform: translateY(-5px); box-shadow: 0 32px 60px rgba(0, 0, 0, 0.6); }
 
-    .pilotage-body { padding: 25px; }
+    /* --- SIDEBAR INSIGHTS --- */
+    .insights-panel {
+      background: var(--glass-bg); border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 32px; padding: 40px 32px 32px; box-shadow: 0 28px 60px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(24px); display: grid; gap: 28px; position: relative;
+    }
+    .insights-pinned-header {
+      position: sticky; top: 80px; z-index: 5; margin: -8px -8px 0; padding: 18px 22px;
+      border-radius: 22px; background: rgba(8, 8, 8, 0.92); border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.55); backdrop-filter: blur(18px); display: grid; gap: 6px;
+    }
+    .insights-pinned-header h3 { font-size: 1.2rem; letter-spacing: 0.18em; text-transform: uppercase; color: #fff; margin: 0; }
+    .insights-pinned-header p { color: var(--color-text-muted); font-size: 0.92rem; margin: 0; }
 
-    .status-box {
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.05);
-      border-radius: 16px;
-      padding: 20px;
-      text-align: center;
-      margin-bottom: 20px;
+    .result-status {
+      padding: 18px 20px; border-radius: 20px;
+      background: rgba(0, 0, 0, 0.28); border: 1px solid var(--color-border);
+      color: var(--color-text); font-weight: 500; display: flex; flex-direction: column; gap: 10px;
     }
-    .status-main { font-size: 1rem; font-weight: 600; color: #fff; display: block; margin-bottom: 8px; }
-    .status-sub { font-size: 0.75rem; color: #00ff9d; font-family: monospace; }
+    .status-main { font-size: 1rem; font-weight: 600; display: block; margin-bottom: 5px; }
+    .token-est { font-size: 0.8rem; color: #aaa; }
 
-    /* Bouton principal (Générer) */
-    .btn-main {
-      width: 100%;
-      background: linear-gradient(90deg, #e0a3ff, #ff69b4);
-      border: none;
-      padding: 16px;
-      border-radius: 12px;
-      color: #000;
-      font-weight: 700;
-      font-size: 0.95rem;
-      cursor: pointer;
-      box-shadow: 0 10px 20px rgba(224, 163, 255, 0.3);
-      transition: 0.3s;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-    }
-    .btn-main:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 30px rgba(224, 163, 255, 0.5);
-    }
-    .btn-main:disabled { opacity: 0.6; cursor: not-allowed; }
+    .generation-progress { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+    .generation-progress-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 0.9rem; letter-spacing: 0.02em; }
+    .generation-progress-bar { position: relative; height: 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+    .generation-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #e0a3ff, #00ffff); transition: width 0.3s ease; }
 
-    .btn-secondary {
-      background: rgba(0, 255, 255, 0.1);
-      border: 1px solid rgba(0, 255, 255, 0.3);
-      color: #00ffff;
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      font-weight: 600;
-      margin-top: 15px;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      text-decoration: none;
-      transition: 0.3s;
+    .result-preview {
+      background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px; padding: 18px; color: var(--color-text-muted); font-size: 0.92rem;
+      max-height: 200px; overflow-y: auto; font-family: 'Inter', monospace;
     }
-    .btn-secondary:hover { background: rgba(0, 255, 255, 0.2); }
 
-    /* Logs & History */
-    .history-list { margin-top: 30px; }
-    .history-item {
-      display: flex; gap: 15px; margin-bottom: 20px; position: relative;
+    .cost-log-link {
+      display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px;
+      border-radius: 14px; border: 1px solid rgba(0, 255, 255, 0.25); background: rgba(0, 255, 255, 0.12);
+      color: #00ffff; font-weight: 600; text-decoration: none; width: 100%; justify-content: center;
     }
-    .history-item::before {
-      content: ''; position: absolute; left: 6px; top: 20px; bottom: -20px;
-      width: 2px; background: rgba(255,255,255,0.1);
-    }
-    .history-item:last-child::before { display: none; }
-    
-    .history-dot {
-      width: 14px; height: 14px; border-radius: 50%;
-      background: #000; border: 2px solid #00ffff;
-      box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
-      flex-shrink: 0; margin-top: 4px;
-    }
-    .history-content { font-size: 0.85rem; color: rgba(255,255,255,0.8); }
+    .cost-log-link:hover { background: rgba(0, 255, 255, 0.2); }
 
-    /* Upload Zone */
-    .upload-zone {
-      border: 2px dashed rgba(255,255,255,0.15);
-      border-radius: 16px;
-      padding: 20px;
-      background: rgba(0,0,0,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: 0.3s;
-    }
-    .upload-zone:hover { border-color: #00ffff; background: rgba(0,255,255,0.05); }
-    .upload-btn-fake {
-      background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 8px;
-      font-size: 0.8rem; font-weight: 600; color: #fff;
-    }
+    .result-history { list-style: none; display: grid; gap: 18px; margin: 0; padding-left: 0; position: relative; }
+    .result-item { position: relative; display: grid; gap: 6px; padding: 16px 18px 16px 56px; border-radius: 18px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: var(--color-text-soft); font-size: 0.9rem; }
+    .result-item::before { content: ''; position: absolute; top: 20px; left: 10px; width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(0, 255, 255, 0.6); background: #050505; }
 
     /* --- FOOTER MATRIX --- */
-    .matrix-section {
-      grid-column: 1 / -1;
-      text-align: center;
-      margin-top: 60px;
-      padding-top: 60px;
-      border-top: 1px solid rgba(255,255,255,0.1);
-    }
-    .matrix-title { font-size: 2rem; font-weight: 800; margin-bottom: 40px; }
-    .matrix-grid {
-      display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
-    }
-    .matrix-card {
-      width: 160px; height: 180px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      padding: 15px; transition: 0.3s;
-    }
-    .matrix-card:hover { transform: translateY(-10px); background: rgba(255,255,255,0.08); border-color: #e0a3ff; }
-    .matrix-icon { font-size: 2rem; margin-bottom: 15px; }
-    .matrix-label { font-weight: 700; font-size: 0.85rem; color: #fff; margin-bottom: 5px; }
-    .matrix-sub { font-size: 0.7rem; color: var(--text-muted); line-height: 1.3; }
+    .showcase { padding: 140px 20px; }
+    .section-title { font-size: clamp(2.2rem, 4vw, 3.2rem); text-align: center; margin-bottom: 80px; letter-spacing: 0.02em; }
+    .hexagon-container { display: flex; flex-wrap: wrap; gap: 28px; justify-content: center; }
+    .hexagon { width: 210px; height: 260px; position: relative; transition: transform 0.8s ease, opacity 0.8s ease; }
+    .hexagon-bg { position: absolute; inset: 0; border-radius: 26px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); backdrop-filter: blur(18px); box-shadow: var(--glass-shadow); z-index: 1; }
+    .hexagon-content { position: absolute; inset: 0; padding: 40px 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center; z-index: 2; pointer-events: none; }
+    .hexagon:hover { transform: translateY(-10px); z-index: 10; }
+    .hexagon-icon { font-size: 2.6rem; }
+    .hexagon h4 { font-size: 1.2rem; margin: 0; color: #fff; }
+    .hexagon p { color: rgba(255, 255, 255, 0.65); font-size: 0.9rem; margin: 0; }
 
-    /* Responsive */
-    @media (max-width: 1000px) {
-      .container { grid-template-columns: 1fr; }
-      .sidebar { position: relative; top: 0; }
+    footer { padding: 80px 20px; background: rgba(0, 0, 0, 0.5); border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: center; color: rgba(255,255,255,0.6); font-size: 0.9rem; }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 1100px) {
+      .console-layout { grid-template-columns: 1fr; }
+      .results-column { position: relative; top: 0; }
     }
   </style>
 </head>
@@ -349,285 +228,331 @@
 
   <div class="neural-background"></div>
   <div class="geometric-shapes">
-    <div class="shape"></div><div class="shape"></div>
+    <div class="shape"></div><div class="shape"></div><div class="shape"></div><div class="shape"></div>
   </div>
 
-  <div class="container">
-    
-    <header class="header-section">
-      <div class="logo-container">
-        <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/1/1d/Logo_ICAM_-_2008.svg/1200px-Logo_ICAM_-_2008.svg.png" alt="Icam">
-      </div>
-      <p style="font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:2px; margin-bottom:10px; color:rgba(255,255,255,0.6);">Générateur Propale V2 (Corrigé)</p>
-      <h1>Console Neural · Génération de propale</h1>
-      <p class="subtitle">Renseignez les zones clés. Toutes les informations sont transmises à Apps Script qui orchestre la copie du template Google Docs, le remplissage des zones surlignées et l'appel à DeepSeek.</p>
-    </header>
+  <header>
+    <a href="#" class="logo">
+      <img class="icam-logo-custom" src="https://upload.wikimedia.org/wikipedia/fr/thumb/1/1d/Logo_ICAM_-_2008.svg/1200px-Logo_ICAM_-_2008.svg.png" alt="Icam">
+      <span>MSI Propales B2</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#" class="active">Console</a></li>
+      <li><a href="#showcase">Matrix</a></li>
+      <li><a href="#">GitHub</a></li>
+    </ul>
+  </header>
 
-    <main>
-      
-      <div class="card">
-        <div class="card-header">
-          <span class="icon-emoji">📋</span> Informations projet
-        </div>
-        <div class="form-row">
-          <div class="form-group full-width">
-            <label>Titre *</label>
-            <input type="text" id="f_titre" placeholder="Optimisation flux entrepôt" required>
-          </div>
-          <div class="form-group">
-            <label>Code Projet</label>
-            <input type="text" id="f_codeProjet" placeholder="144-16">
-          </div>
-          <div class="form-group">
-            <label>Date Début</label>
-            <input type="text" id="f_dateDebut" placeholder="Septembre 2025">
-          </div>
-          <div class="form-group">
-            <label>Nb. Équipes</label>
-            <input type="number" id="f_nbEquipes" value="1">
-          </div>
-          <div class="form-group">
-            <label>Durée (Semaines)</label>
-            <input type="number" id="f_dureeSemaines" value="24">
-          </div>
-          <div class="form-group full-width">
-            <label>Durée (Texte)</label>
-            <input type="text" id="f_dureeProjet" placeholder="Ex: 6 mois">
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <span class="icon-emoji">🏢</span> Entreprise & Contact
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Entreprise *</label>
-            <input type="text" id="f_entrepriseNom" placeholder="Velibor SA">
-          </div>
-          <div class="form-group">
-            <label>Adresse</label>
-            <input type="text" id="f_entrepriseAdresse" placeholder="49 bis rue Sedaine, 75011 Paris">
-          </div>
-          <div class="form-group">
-            <label>Logo URL (Mapped #D9D9D9)</label>
-            <input type="text" id="f_entrepriseLogo" placeholder="https://exemple.com/logo.png">
-          </div>
-          <div class="form-group">
-            <label>Nom Contact</label>
-            <input type="text" id="f_clientNom" placeholder="Jean Dupont">
-          </div>
-          <div class="form-group">
-            <label>Fonction</label>
-            <input type="text" id="f_clientFonction" placeholder="Directeur Technique">
-          </div>
-          <div class="form-group">
-            <label>Email</label>
-            <input type="text" id="f_clientEmail" placeholder="jean@exemple.com">
-          </div>
-          <div class="form-group full-width">
-            <label>
-              Histoire & ADN (Contexte)
-              <button class="btn-dictate" data-target="f_ia_histoire">🎙️ DICTER</button>
-            </label>
-            <textarea id="f_ia_histoire" rows="2" placeholder="Ex: PME familiale créée en 1970, savoir-faire artisanal..."></textarea>
-          </div>
-          <div class="form-group full-width">
-            <label>
-              Lieux / Géographie
-              <button class="btn-dictate" data-target="f_ia_lieux">🎙️ DICTER</button>
-            </label>
-            <input type="text" id="f_ia_lieux" placeholder="Ex: Déménagement de Brie-Comte-Robert à Moissy">
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <span class="icon-emoji">🧠</span> Brief pour DeepSeek
-        </div>
-        <div class="form-group full-width" style="margin-bottom:20px;">
-          <label>
-            Problème Principal *
-            <div style="display:flex; gap:10px; align-items:center;">
-              <button class="btn-dictate" data-target="f_ia_probleme">🎙️ DICTER</button>
-              <span class="status-text" id="status-f_ia_probleme">PRÊT.</span>
+  <main>
+    <section class="console-section">
+      <div class="console-wrapper">
+        
+        <div class="console-header">
+          <div class="console-header-top">
+            <div class="console-logo-wrapper">
+              <img class="console-logo" src="https://upload.wikimedia.org/wikipedia/fr/thumb/1/1d/Logo_ICAM_-_2008.svg/1200px-Logo_ICAM_-_2008.svg.png" alt="Icam">
             </div>
-          </label>
-          <textarea id="f_ia_probleme" placeholder="Retards de livraison, manque de traçabilité..."></textarea>
-        </div>
-
-        <div class="form-group full-width" style="margin-bottom:20px;">
-          <label>
-            Solution Proposée
-            <div style="display:flex; gap:10px; align-items:center;">
-              <button class="btn-dictate" data-target="f_ia_solution">🎙️ DICTER</button>
-              <span class="status-text" id="status-f_ia_solution">PRÊT.</span>
+            <div class="console-header-text">
+              <h4 style="margin:0; font-size:0.9rem; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:2px;">Générateur Propale V2 (PlaceHolder)</h4>
+              <h2>Console Neural · Génération de propale</h2>
+              <p>Renseignez les zones clés. Toutes les informations sont transmises à Apps Script qui orchestre la copie du template Google Docs, le remplissage des zones et l'appel à DeepSeek.</p>
             </div>
-          </label>
-          <textarea id="f_ia_solution" placeholder="5S, outil de tracking, formation équipes..."></textarea>
-        </div>
-
-        <div class="form-group full-width">
-          <label>
-            Objectifs Clés
-            <div style="display:flex; gap:10px; align-items:center;">
-              <button class="btn-dictate" data-target="f_ia_objectifs">🎙️ DICTER</button>
-              <span class="status-text" id="status-f_ia_objectifs">PRÊT.</span>
-            </div>
-          </label>
-          <textarea id="f_ia_objectifs" rows="2" placeholder="Réduire de 20% les temps de préparation, etc."></textarea>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <span class="icon-emoji">🤖</span> Sections générées par DeepSeek
-        </div>
-        <div class="form-group full-width" style="margin-bottom:20px;">
-          <label>Contexte <span class="status-text">GÉNÉRÉ / ÉDITION MANUELLE POSSIBLE</span></label>
-          <textarea id="f_contexte" rows="3" readonly></textarea>
-        </div>
-        <div class="form-group full-width" style="margin-bottom:20px;">
-          <label>Démarche</label>
-          <textarea id="f_demarche" rows="3" readonly></textarea>
-        </div>
-        <div class="form-group full-width" style="margin-bottom:20px;">
-          <label>Phases</label>
-          <textarea id="f_phases" rows="3" readonly></textarea>
-        </div>
-        <div class="form-group full-width">
-          <label>Phrase de Clôture</label>
-          <textarea id="f_phrase" rows="2" readonly></textarea>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <span class="icon-emoji">📎</span> Pièces jointes & outils
-        </div>
-        <div class="form-group full-width">
-          <label>Ajouter des documents (Jusqu'à 15)</label>
-          <div class="upload-zone" onclick="document.getElementById('f_attachments').click()">
-            <div style="display:flex; align-items:center; gap:15px;">
-              <button class="upload-btn-fake">Sélect. fichiers</button>
-              <span style="font-size:0.85rem; color:#fff;" id="fileLabel">Aucun fichier choisi</span>
-            </div>
-            <span style="font-size:0.75rem; color:rgba(255,255,255,0.4);">Aucun fichier sélectionné (0/15).</span>
-            <input type="file" id="f_attachments" multiple style="display:none">
-          </div>
-        </div>
-      </div>
-
-    </main>
-
-    <aside class="sidebar">
-      <div class="card pilotage-card">
-        <div class="pilotage-header">
-          <div class="pilotage-title">
-            <span>📟</span> PILOTAGE & JOURNALISATION
-          </div>
-          <div class="pilotage-subtitle">
-            Suivez l'état de la génération, le suivi des coûts et les derniers évènements.
           </div>
         </div>
 
-        <div class="pilotage-body">
-          <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-            <span style="font-size:0.7rem; color:rgba(255,255,255,0.5); letter-spacing:1px;">STATUT EN DIRECT</span>
-            <span style="font-size:0.6rem; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px;">CONSOLE IA</span>
-          </div>
-
-          <div class="status-box">
-            <span class="status-main" id="statusMain">Prêt pour une nouvelle génération.</span>
-          </div>
-
-          <span class="status-sub" id="tokenEstimate">Estimation prompt ≈ 0 tokens (limite 100000)</span>
-
-          <div style="margin-top:30px; margin-bottom:10px;">
-            <span style="font-size:0.7rem; color:rgba(255,255,255,0.5); letter-spacing:1px;">PRÉVISUALISATION</span>
-          </div>
+        <div class="console-layout">
           
-          <a href="#" class="btn-secondary" id="costLogBtn">
-            <span>📊</span> Journal des coûts
-          </a>
-
-          <div style="margin-top:10px; background:rgba(0,0,0,0.3); padding:15px; border-radius:12px; font-family:'Courier New'; font-size:0.75rem; color:#aaa; min-height:60px;">
-            <span id="previewText">Prêt à compiler les informations du brief.</span>
-          </div>
-
-          <button id="btnGenerate" class="btn-main" style="margin-top:30px;">
-            <span>✨</span> Générer la propale
-          </button>
-
-          <div style="margin-top:30px;">
-            <span style="font-size:0.7rem; color:rgba(255,255,255,0.5); letter-spacing:1px;">HISTORIQUE DES ACTIONS</span>
-            <div class="history-list" id="historyList">
-              <div class="history-item">
-                <div class="history-dot"></div>
-                <div class="history-content">Historique vide pour le moment.</div>
+          <div class="form-panels">
+            
+            <div class="glass-panel">
+              <div class="panel-title">📋 Informations projet</div>
+              <div class="form-grid">
+                <div class="field grid-span-2">
+                  <label for="f_titre">TITRE *</label>
+                  <input type="text" id="f_titre" placeholder="Optimisation flux entrepôt" required>
+                </div>
+                <div class="field">
+                  <label for="f_codeProjet">CODE PROJET</label>
+                  <input type="text" id="f_codeProjet" placeholder="144-16">
+                </div>
+                <div class="field">
+                  <label for="f_dateDebut">DATE DÉBUT</label>
+                  <input type="text" id="f_dateDebut" placeholder="Septembre 2025">
+                </div>
+                <div class="field">
+                  <label for="f_nbEquipes">NB. ÉQUIPES</label>
+                  <input type="number" id="f_nbEquipes" value="1">
+                </div>
+                <div class="field">
+                  <label for="f_dureeSemaines">DURÉE (SEMAINES)</label>
+                  <input type="number" id="f_dureeSemaines" value="24">
+                </div>
+                <div class="field grid-span-2">
+                  <label for="f_dureeProjet">DURÉE TEXTE</label>
+                  <input type="text" id="f_dureeProjet" placeholder="Ex: 6 mois">
+                </div>
               </div>
             </div>
+
+            <div class="glass-panel">
+              <div class="panel-title">🏢 Entreprise & Contexte</div>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="f_entrepriseNom">ENTREPRISE *</label>
+                  <input type="text" id="f_entrepriseNom" placeholder="Velibor SA">
+                </div>
+                <div class="field">
+                  <label for="f_entrepriseAdresse">ADRESSE</label>
+                  <input type="text" id="f_entrepriseAdresse" placeholder="49 bis rue Sedaine, 75011 Paris">
+                </div>
+                <div class="field">
+                  <label for="f_entrepriseLogo">LOGO URL (MAPPED #D9D9D9)</label>
+                  <input type="text" id="f_entrepriseLogo" placeholder="https://exemple.com/logo.png">
+                </div>
+                <div class="field">
+                  <label for="f_clientNom">NOM CONTACT</label>
+                  <input type="text" id="f_clientNom" placeholder="Jean Dupont">
+                </div>
+                <div class="field">
+                  <label for="f_clientFonction">FONCTION</label>
+                  <input type="text" id="f_clientFonction" placeholder="Directeur Technique">
+                </div>
+                <div class="field">
+                  <label for="f_clientEmail">EMAIL</label>
+                  <input type="text" id="f_clientEmail" placeholder="jean@exemple.com">
+                </div>
+                
+                <div class="field grid-span-2">
+                  <div class="field-header">
+                    <label>HISTOIRE & ADN CLIENT (CONTEXTE B2)</label>
+                    <div class="field-actions">
+                      <button type="button" class="dictation-button" data-target="f_ia_histoire">🎙️ DICTER</button>
+                      <span class="dict-status" id="status-f_ia_histoire"></span>
+                    </div>
+                  </div>
+                  <textarea id="f_ia_histoire" rows="2" placeholder="Ex: PME familiale créée en 1970, savoir-faire artisanal..."></textarea>
+                </div>
+                <div class="field grid-span-2">
+                  <div class="field-header">
+                    <label>LIEUX / GÉOGRAPHIE (CONTEXTE B2)</label>
+                    <div class="field-actions">
+                      <button type="button" class="dictation-button" data-target="f_ia_lieux">🎙️ DICTER</button>
+                      <span class="dict-status" id="status-f_ia_lieux"></span>
+                    </div>
+                  </div>
+                  <input type="text" id="f_ia_lieux" placeholder="Ex: Déménagement de Brie-Comte-Robert à Moissy">
+                </div>
+              </div>
+            </div>
+
+            <div class="glass-panel">
+              <div class="panel-title">🧠 Brief pour DeepSeek</div>
+              <div class="form-grid">
+                <div class="field grid-span-2">
+                  <div class="field-header">
+                    <label>PROBLÈME PRINCIPAL *</label>
+                    <div class="field-actions">
+                      <button type="button" class="dictation-button" data-target="f_ia_probleme">🎙️ DICTER</button>
+                      <span class="dict-status" id="status-f_ia_probleme">PRÊT.</span>
+                    </div>
+                  </div>
+                  <textarea id="f_ia_probleme" placeholder="Retards de livraison, manque de traçabilité..."></textarea>
+                </div>
+                <div class="field grid-span-2">
+                  <div class="field-header">
+                    <label>SOLUTION PROPOSÉE</label>
+                    <div class="field-actions">
+                      <button type="button" class="dictation-button" data-target="f_ia_solution">🎙️ DICTER</button>
+                      <span class="dict-status" id="status-f_ia_solution">PRÊT.</span>
+                    </div>
+                  </div>
+                  <textarea id="f_ia_solution" placeholder="5S, outil de tracking, formation équipes..."></textarea>
+                </div>
+                <div class="field grid-span-2">
+                  <div class="field-header">
+                    <label>OBJECTIFS CLÉS</label>
+                    <div class="field-actions">
+                      <button type="button" class="dictation-button" data-target="f_ia_objectifs">🎙️ DICTER</button>
+                      <span class="dict-status" id="status-f_ia_objectifs">PRÊT.</span>
+                    </div>
+                  </div>
+                  <textarea id="f_ia_objectifs" placeholder="Réduire de 20% les temps de préparation, etc."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="glass-panel">
+              <div class="panel-title">🤖 Sections générées par DeepSeek</div>
+              <div class="form-grid">
+                <div class="field grid-span-2">
+                  <div class="field-header">
+                    <label>CONTEXTE</label>
+                    <div class="field-actions">
+                      <button type="button" class="dictation-button" data-target="f_contexte">🎙️ DICTER</button>
+                      <span class="dict-status" id="status-f_contexte">PRÊT.</span>
+                    </div>
+                  </div>
+                  <textarea id="f_contexte" placeholder="(Généré / Édition manuelle possible)"></textarea>
+                </div>
+                <div class="field grid-span-2">
+                  <div class="field-header">
+                    <label>DÉMARCHE</label>
+                    <div class="field-actions">
+                      <button type="button" class="dictation-button" data-target="f_demarche">🎙️ DICTER</button>
+                      <span class="dict-status" id="status-f_demarche">PRÊT.</span>
+                    </div>
+                  </div>
+                  <textarea id="f_demarche" placeholder="(Généré / Édition manuelle possible)"></textarea>
+                </div>
+                <div class="field grid-span-2">
+                  <div class="field-header">
+                    <label>PHASES</label>
+                    <div class="field-actions">
+                      <button type="button" class="dictation-button" data-target="f_phases">🎙️ DICTER</button>
+                      <span class="dict-status" id="status-f_phases">PRÊT.</span>
+                    </div>
+                  </div>
+                  <textarea id="f_phases" placeholder="(Généré / Édition manuelle possible)"></textarea>
+                </div>
+                <div class="field grid-span-2">
+                  <div class="field-header">
+                    <label>PHRASE DE CLÔTURE</label>
+                    <div class="field-actions">
+                      <button type="button" class="dictation-button" data-target="f_phrase">🎙️ DICTER</button>
+                      <span class="dict-status" id="status-f_phrase">PRÊT.</span>
+                    </div>
+                  </div>
+                  <textarea id="f_phrase" rows="2" placeholder="(Généré / Édition manuelle possible)"></textarea>
+                </div>
+              </div>
+              
+              <div class="actions">
+                <button type="button" id="btnGenerate" class="action-buttons">✨ GÉNÉRER LA PROPALE</button>
+              </div>
+            </div>
+
+            <div class="glass-panel">
+              <div class="panel-title">📎 Pièces jointes & outils</div>
+              <div class="form-grid">
+                <div class="field grid-span-2">
+                  <label>AJOUTER DES DOCUMENTS (JUSQU'À 15)</label>
+                  <div class="upload-container" onclick="document.getElementById('f_attachments').click()" style="background:rgba(0,0,0,0.3); padding:20px; border-radius:16px; display:flex; align-items:center; gap:20px; cursor:pointer; border:1px dashed rgba(255,255,255,0.2);">
+                    <div style="background:rgba(255,255,255,0.1); padding:10px 20px; border-radius:8px; font-weight:600;">Sélect. fichiers</div>
+                    <div style="color:rgba(255,255,255,0.6); font-size:0.85rem;" id="fileLabel">Aucun fichier choisi</div>
+                    <input type="file" id="f_attachments" multiple style="display:none">
+                  </div>
+                  <p class="files-hint">Aucun fichier sélectionné (0/15).</p>
+                  <ul id="attachmentsList" class="attachments-list"></ul>
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          <div id="resultLinks" style="display:none; margin-top:20px;">
-            <a href="#" id="docLink" target="_blank" class="btn-secondary" style="background:#00ffff; color:#000;">📄 Ouvrir Document</a>
-            <a href="#" id="pdfLink" target="_blank" class="btn-secondary">⬇️ PDF</a>
-          </div>
+          <aside class="results-column">
+            <section class="insights-panel">
+              <div class="insights-pinned-header">
+                <h3>📟 PILOTAGE & JOURNALISATION</h3>
+                <p>Suivez l'état de la génération, le suivi des coûts et les derniers évènements.</p>
+              </div>
+
+              <div class="result-status">
+                <span class="status-main" style="font-size:0.8rem; color:rgba(255,255,255,0.5); letter-spacing:1px;">STATUT EN DIRECT</span>
+                <span class="status-text" id="statusMain" style="font-size:1rem; font-weight:600;">Prêt pour une nouvelle génération.</span>
+                <span class="token-est" id="tokenEstimate">Estimation prompt ≈ 0 tokens (limite 100000)</span>
+                
+                <div class="generation-progress">
+                  <div class="generation-progress-bar"><div class="generation-progress-fill" id="progressFill"></div></div>
+                </div>
+              </div>
+
+              <div style="margin-top:30px;">
+                <h4 style="font-size:0.8rem; color:rgba(255,255,255,0.6); text-transform:uppercase; margin-bottom:10px;">PRÉVISUALISATION</h4>
+                <a href="#" class="cost-log-link" id="costLogBtn">📊 Journal des coûts</a>
+                <pre class="result-preview" id="consoleLog">Système prêt.</pre>
+              </div>
+
+              <div style="margin-top:30px;">
+                <h4 style="font-size:0.8rem; color:rgba(255,255,255,0.6); text-transform:uppercase; margin-bottom:10px;">HISTORIQUE DES ACTIONS</h4>
+                <ul class="result-history" id="historyList">
+                  <li class="result-item">Historique vide pour le moment.</li>
+                </ul>
+              </div>
+
+              <div style="margin-top:30px;">
+                <h4 style="font-size:0.8rem; color:rgba(255,255,255,0.6); text-transform:uppercase; margin-bottom:10px;">CONSEILS RAPIDES</h4>
+                <ul style="font-size:0.85rem; color:rgba(255,255,255,0.5); padding-left:20px; line-height:1.5;">
+                  <li>Précisez le problème principal pour guider DeepSeek.</li>
+                  <li>Ajoutez des documents clés pour la mise en contexte.</li>
+                  <li>Consultez le journal Google Sheets pour suivre les coûts.</li>
+                </ul>
+              </div>
+
+              <div id="resultLinks" style="display:none; margin-top:20px;">
+                <a href="#" id="docLink" target="_blank" class="cost-log-link" style="margin-bottom:10px; background:#00ffff; color:#000;">📄 Ouvrir GDoc</a>
+                <a href="#" id="pdfLink" target="_blank" class="cost-log-link">⬇️ Télécharger PDF</a>
+              </div>
+
+            </section>
+          </aside>
 
         </div>
       </div>
-    </aside>
+    </section>
 
-    <div class="matrix-section">
-      <h2 class="matrix-title">Matrix Protocols</h2>
-      <div class="matrix-grid">
-        <div class="matrix-card">
-          <div class="matrix-icon">🔮</div>
-          <div class="matrix-label">Holographic UI</div>
-          <div class="matrix-sub">Interface monofichier prête pour Apps Script</div>
-        </div>
-        <div class="matrix-card">
-          <div class="matrix-icon">🛡️</div>
-          <div class="matrix-label">Quantum Security</div>
-          <div class="matrix-sub">Clé DeepSeek stockée côté serveur</div>
-        </div>
-        <div class="matrix-card">
-          <div class="matrix-icon">🚀</div>
-          <div class="matrix-label">Speed Navigation</div>
-          <div class="matrix-sub">Accès direct au document généré</div>
-        </div>
-        <div class="matrix-card">
-          <div class="matrix-icon">💎</div>
-          <div class="matrix-label">Crystal Storage</div>
-          <div class="matrix-sub">Copie organisée dans Drive cible</div>
-        </div>
-        <div class="matrix-card">
-          <div class="matrix-icon">🎯</div>
-          <div class="matrix-label">Neural Targeting</div>
-          <div class="matrix-sub">Color mapping intelligent</div>
-        </div>
-        <div class="matrix-card">
-          <div class="matrix-icon">⭐</div>
-          <div class="matrix-label">Stellar Network</div>
-          <div class="matrix-sub">Workflow collaboratif Icam</div>
-        </div>
+    <section class="showcase" id="showcase">
+      <h2 class="section-title">Matrix Protocols</h2>
+      <div class="hexagon-container">
+        <div class="hexagon"><div class="hexagon-bg"></div><div class="hexagon-content"><div class="hexagon-icon">🔮</div><h4>Holographic UI</h4><p>Interface monofichier prête pour Apps Script</p></div></div>
+        <div class="hexagon"><div class="hexagon-bg"></div><div class="hexagon-content"><div class="hexagon-icon">🛡️</div><h4>Quantum Security</h4><p>Clé DeepSeek stockée côté serveur</p></div></div>
+        <div class="hexagon"><div class="hexagon-bg"></div><div class="hexagon-content"><div class="hexagon-icon">🚀</div><h4>Speed Navigation</h4><p>Accès direct au document généré</p></div></div>
+        <div class="hexagon"><div class="hexagon-bg"></div><div class="hexagon-content"><div class="hexagon-icon">💎</div><h4>Crystal Storage</h4><p>Copie organisée dans Drive cible</p></div></div>
+        <div class="hexagon"><div class="hexagon-bg"></div><div class="hexagon-content"><div class="hexagon-icon">🎯</div><h4>Neural Targeting</h4><p>Color mapping intelligent</p></div></div>
+        <div class="hexagon"><div class="hexagon-bg"></div><div class="hexagon-content"><div class="hexagon-icon">⭐</div><h4>Stellar Network</h4><p>Workflow collaboratif Icam</p></div></div>
       </div>
-    </div>
+    </section>
 
-  </div>
+  </main>
+
+  <footer>
+    <div>&copy; 2025 MSI Propales · Interface Apps Script · Icam</div>
+  </footer>
 
   <script>
-    // --- JS LOGIC (SIMILAR TO V1) ---
+    // --- UTILS LOGS ---
+    const logEl = document.getElementById('consoleLog');
+    const historyList = document.getElementById('historyList');
     
-    // 1. Gestion Fichiers
+    function log(msg) {
+      logEl.textContent = msg + "\n" + logEl.textContent;
+    }
+    
+    function addHistory(msg) {
+      const li = document.createElement('li');
+      li.className = 'result-item';
+      li.innerHTML = `<span>${msg}</span><br><small style="color:rgba(255,255,255,0.3); font-size:0.7em;">${new Date().toLocaleTimeString()}</small>`;
+      historyList.prepend(li);
+      if(historyList.children.length > 5) historyList.lastChild.remove();
+    }
+
+    // --- FICHIERS ---
     const fileInput = document.getElementById('f_attachments');
+    const attachmentsList = document.getElementById('attachmentsList');
     let selectedFiles = [];
+
     fileInput.addEventListener('change', (e) => {
-      selectedFiles = Array.from(e.target.files);
+      const newFiles = Array.from(e.target.files);
+      selectedFiles = selectedFiles.concat(newFiles);
       document.getElementById('fileLabel').textContent = `${selectedFiles.length} fichier(s) choisi(s)`;
-      addToHistory(`${selectedFiles.length} fichiers ajoutés.`);
+      
+      attachmentsList.innerHTML = '';
+      selectedFiles.forEach(f => {
+        const li = document.createElement('li');
+        li.className = 'attachment-item';
+        li.innerHTML = `<span>${f.name}</span> <span style="opacity:0.5">${(f.size/1024).toFixed(1)} KB</span>`;
+        attachmentsList.appendChild(li);
+      });
+      addHistory(`${newFiles.length} documents ajoutés.`);
     });
 
     const readFile = (file) => new Promise((resolve) => {
@@ -636,40 +561,72 @@
       reader.readAsDataURL(file);
     });
 
-    // 2. Estimation Tokens
+    // --- TOKEN ESTIMATION ---
     document.body.addEventListener('input', () => {
       let chars = 0;
-      ['f_titre', 'f_ia_histoire', 'f_ia_probleme', 'f_ia_solution'].forEach(id => {
-        const val = document.getElementById(id).value;
-        if(val) chars += val.length;
+      ['f_titre', 'f_ia_histoire', 'f_ia_probleme', 'f_ia_solution', 'f_ia_objectifs'].forEach(id => {
+        const v = document.getElementById(id).value;
+        if(v) chars += v.length;
       });
       document.getElementById('tokenEstimate').textContent = `Estimation prompt ≈ ${Math.ceil(chars/4)} tokens (limite 100000)`;
     });
 
-    // 3. Bouton Générer
+    // --- DICTÉE VOCALE ---
+    document.querySelectorAll('.dictation-button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.dataset.target;
+        const targetEl = document.getElementById(targetId);
+        const statusEl = document.getElementById('status-'+targetId);
+        
+        if (!('webkitSpeechRecognition' in window)) {
+          alert("Dictée non supportée par ce navigateur.");
+          return;
+        }
+        
+        const rec = new webkitSpeechRecognition();
+        rec.lang = 'fr-FR';
+        rec.start();
+        
+        btn.classList.add('is-active');
+        if(statusEl) statusEl.textContent = "ÉCOUTE...";
+        
+        rec.onresult = (e) => {
+          const text = e.results[0][0].transcript;
+          targetEl.value += (targetEl.value ? " " : "") + text;
+          if(statusEl) statusEl.textContent = "OK";
+          btn.classList.remove('is-active');
+        };
+        
+        rec.onerror = () => {
+          if(statusEl) statusEl.textContent = "ERREUR";
+          btn.classList.remove('is-active');
+        };
+      });
+    });
+
+    // --- GÉNÉRATION ---
     document.getElementById('btnGenerate').addEventListener('click', async () => {
       const btn = document.getElementById('btnGenerate');
       const statusMain = document.getElementById('statusMain');
-      const previewText = document.getElementById('previewText');
+      const progressFill = document.getElementById('progressFill');
       const resultLinks = document.getElementById('resultLinks');
 
       const titre = document.getElementById('f_titre').value;
       const entreprise = document.getElementById('f_entrepriseNom').value;
 
       if (!titre || !entreprise) {
-        alert("Erreur: Champs Titre et Entreprise obligatoires.");
+        alert("Erreur: Titre et Entreprise requis.");
         return;
       }
 
-      // UI Start
       btn.disabled = true;
-      btn.innerHTML = "⏳ GÉNÉRATION EN COURS...";
+      btn.textContent = "⏳ GÉNÉRATION EN COURS...";
       statusMain.textContent = "Initialisation...";
-      previewText.textContent = "Préparation des données...";
+      progressFill.style.width = '10%';
       resultLinks.style.display = 'none';
-      addToHistory("Démarrage séquence...");
+      addHistory("Démarrage séquence B2...");
+      log("Préparation des données...");
 
-      // Collecte Data (V2 PlaceHolder Logic)
       const data = {
         titre: titre,
         entrepriseNom: entreprise,
@@ -683,40 +640,48 @@
         clientNom: document.getElementById('f_clientNom').value,
         clientFonction: document.getElementById('f_clientFonction').value,
         clientEmail: document.getElementById('f_clientEmail').value,
-        // Specific V2
+        // V2 SPECIFIC
         ia_histoire: document.getElementById('f_ia_histoire').value,
         ia_lieux: document.getElementById('f_ia_lieux').value,
         ia_probleme: document.getElementById('f_ia_probleme').value,
         ia_solution: document.getElementById('f_ia_solution').value,
-        ia_objectifs: document.getElementById('f_ia_objectifs').value
+        ia_objectifs: document.getElementById('f_ia_objectifs').value,
+        // EDITABLE OUTPUTS
+        contexte: document.getElementById('f_contexte').value,
+        demarche: document.getElementById('f_demarche').value,
+        phases: document.getElementById('f_phases').value,
+        phrase: document.getElementById('f_phrase').value
       };
 
-      // Files
       if (selectedFiles.length > 0) {
-        statusMain.textContent = "Lecture Fichiers...";
+        statusMain.textContent = "Upload & OCR...";
+        progressFill.style.width = '20%';
         try {
           data.attachments = await Promise.all(selectedFiles.map(readFile));
+          log(`${selectedFiles.length} fichiers encodés.`);
         } catch (e) {
+          log("Erreur lecture fichier.");
           btn.disabled = false;
-          alert("Erreur fichier");
           return;
         }
       }
 
-      statusMain.textContent = "Appel DeepSeek (Raisonnement)...";
-      
-      // Server Call
+      statusMain.textContent = "Appel DeepSeek...";
+      progressFill.style.width = '40%';
+      let p = 40;
+      const interval = setInterval(() => { if(p<90) { p++; progressFill.style.width = p+'%'; } }, 600);
+
       google.script.run
         .withSuccessHandler(res => {
+          clearInterval(interval);
+          progressFill.style.width = '100%';
           btn.disabled = false;
-          btn.innerHTML = "✨ GÉNÉRER LA PROPALE";
+          btn.textContent = "✨ GÉNÉRER LA PROPALE";
 
           if (res.success) {
             statusMain.textContent = "Succès !";
-            previewText.textContent = "Document généré. Coût: $" + (res.cost?.totalUsd?.toFixed(4) || "0");
-            addToHistory("Génération terminée.");
+            statusMain.style.color = "#00ff99";
             
-            // Preview fill
             if(res.aiSections) {
               document.getElementById('f_contexte').value = res.aiSections.contexte || "";
               document.getElementById('f_demarche').value = res.aiSections.demarche || "";
@@ -724,51 +689,28 @@
               document.getElementById('f_phrase').value = res.aiSections.phrase || "";
             }
 
+            addHistory("Génération terminée.");
+            log(`Coût: $${res.cost?.totalUsd?.toFixed(4) || 0}`);
+            
             document.getElementById('docLink').href = res.url;
             document.getElementById('pdfLink').href = res.pdfUrl;
             resultLinks.style.display = 'grid';
           } else {
-            statusMain.textContent = "Erreur";
+            statusMain.textContent = "Erreur Serveur";
+            statusMain.style.color = "#ff6b6b";
+            log("Erreur: " + res.error);
             alert(res.error);
           }
         })
         .withFailureHandler(err => {
+          clearInterval(interval);
+          progressFill.style.background = "red";
           btn.disabled = false;
-          statusMain.textContent = "Crash";
+          statusMain.textContent = "Crash Critique";
+          log("Crash: " + err);
           alert(err);
         })
         .generateFromForm(data);
-    });
-
-    function addToHistory(msg) {
-      const list = document.getElementById('historyList');
-      const item = document.createElement('div');
-      item.className = 'history-item';
-      item.innerHTML = `<div class="history-dot"></div><div class="history-content">${msg}</div>`;
-      list.prepend(item);
-    }
-
-    // Dictation (Simplified)
-    document.querySelectorAll('.btn-dictate').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const targetId = btn.dataset.target;
-        const target = document.getElementById(targetId);
-        const status = document.getElementById('status-'+targetId);
-        
-        if (!window.webkitSpeechRecognition) { alert("Navigateur non compatible"); return; }
-        
-        const rec = new webkitSpeechRecognition();
-        rec.lang = "fr-FR";
-        rec.start();
-        
-        if(status) status.textContent = "ÉCOUTE...";
-        
-        rec.onresult = (e) => {
-          const txt = e.results[0][0].transcript;
-          target.value += (target.value ? " " : "") + txt;
-          if(status) status.textContent = "OK";
-        };
-      });
     });
   </script>
 </body>
