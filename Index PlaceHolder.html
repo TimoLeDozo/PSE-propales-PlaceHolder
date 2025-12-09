@@ -374,6 +374,11 @@
       box-shadow: 0 0 10px #00ffff; transition: width 0.3s ease;
     }
 
+    .modal-percent {
+      font-size: 1.5rem; font-weight: 700; color: #00ffff; margin: 10px 0;
+      text-shadow: 0 0 15px rgba(0, 255, 255, 0.4); font-family: 'Share Tech Mono', monospace;
+    }
+
     .success-icon { font-size: 3rem; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0, 255, 153, 0.5); }
     .error-icon { font-size: 3rem; margin-bottom: 10px; text-shadow: 0 0 20px rgba(255, 50, 50, 0.5); }
     .modal-desc { color: rgba(255, 255, 255, 0.6); font-size: 0.95rem; margin-bottom: 10px; }
@@ -708,6 +713,7 @@
       <div id="modalLoading" class="modal-state">
         <div class="neural-spinner"></div>
         <h3 class="modal-title">Neural Engine Active</h3>
+        <div class="modal-percent" id="modalPercentText">0%</div>
         <p class="modal-status" id="modalStatusText">Initialisation du flux...</p>
         <div class="modal-progress-track" style="width: 100%;">
           <div class="modal-progress-bar" id="modalProgressBar"></div>
@@ -843,6 +849,7 @@
 
     function updateModalProgress(pct, status) {
       document.getElementById('modalProgressBar').style.width = pct + '%';
+      document.getElementById('modalPercentText').textContent = pct + '%';
       if(status) document.getElementById('modalStatusText').textContent = status;
     }
 
