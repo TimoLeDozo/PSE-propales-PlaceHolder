@@ -709,6 +709,7 @@
         <div class="neural-spinner"></div>
         <h3 class="modal-title">Neural Engine Active</h3>
         <p class="modal-status" id="modalStatusText">Initialisation du flux...</p>
+        <div id="modalPercentText" style="font-family: 'Share Tech Mono', monospace; color: #00ffff; font-size: 1.2rem; font-weight: bold; margin-bottom: 5px;">0%</div>
         <div class="modal-progress-track" style="width: 100%;">
           <div class="modal-progress-bar" id="modalProgressBar"></div>
         </div>
@@ -844,6 +845,7 @@
     function updateModalProgress(pct, status) {
       document.getElementById('modalProgressBar').style.width = pct + '%';
       if(status) document.getElementById('modalStatusText').textContent = status;
+      document.getElementById('modalPercentText').textContent = pct + '%';
     }
 
     // --- GÉNÉRATION ---
