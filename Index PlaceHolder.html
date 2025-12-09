@@ -330,6 +330,53 @@
       .console-layout { grid-template-columns: 1fr; }
       .results-column { position: relative; top: 0; }
     }
+
+    /* --- MODAL SYSTEM --- */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; animation: fadeIn 0.3s forwards;
+    }
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    .modal-content {
+      width: min(500px, 90vw); text-align: center; position: relative;
+      background: #0a0a0a; border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 0 50px rgba(0, 255, 255, 0.15);
+      border-radius: 24px;
+    }
+
+    .modal-close {
+      position: absolute; top: 15px; right: 15px; background: none; border: none;
+      color: rgba(255, 255, 255, 0.5); font-size: 1.5rem; cursor: pointer;
+    }
+    .modal-close:hover { color: #fff; }
+
+    .modal-state { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 40px; }
+
+    .neural-spinner {
+      width: 60px; height: 60px; border-radius: 50%;
+      border: 3px solid rgba(0, 255, 255, 0.1); border-top-color: #00ffff;
+      animation: spin 1s linear infinite; margin-bottom: 10px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .modal-title { font-size: 1.4rem; letter-spacing: 0.05em; color: #fff; margin: 0; }
+    .modal-status { color: rgba(0, 255, 255, 0.8); font-family: 'Share Tech Mono', monospace; font-size: 0.9rem; }
+
+    .modal-progress-track {
+      width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1);
+      border-radius: 99px; overflow: hidden; margin-top: 10px;
+    }
+    .modal-progress-bar {
+      height: 100%; background: #00ffff; width: 0%;
+      box-shadow: 0 0 10px #00ffff; transition: width 0.3s ease;
+    }
+
+    .success-icon { font-size: 3rem; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0, 255, 153, 0.5); }
+    .error-icon { font-size: 3rem; margin-bottom: 10px; text-shadow: 0 0 20px rgba(255, 50, 50, 0.5); }
+    .modal-desc { color: rgba(255, 255, 255, 0.6); font-size: 0.95rem; margin-bottom: 10px; }
   </style>
 </head>
 <body>
@@ -653,6 +700,41 @@
     <div style="margin-top: 5px;">CAGIN Timothé / VELOSO Toni</div>
   </footer>
 
+  <div id="generationModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content glass-panel">
+      <button class="modal-close" onclick="closeModal()">×</button>
+
+      <!-- LOADING STATE -->
+      <div id="modalLoading" class="modal-state">
+        <div class="neural-spinner"></div>
+        <h3 class="modal-title">Neural Engine Active</h3>
+        <p class="modal-status" id="modalStatusText">Initialisation du flux...</p>
+        <div class="modal-progress-track" style="width: 100%;">
+          <div class="modal-progress-bar" id="modalProgressBar"></div>
+        </div>
+      </div>
+
+      <!-- SUCCESS STATE -->
+      <div id="modalSuccess" class="modal-state" style="display: none;">
+        <div class="success-icon">✨</div>
+        <h3 class="modal-title">Propale Générée</h3>
+        <p class="modal-desc">Le document a été créé et stocké avec succès.</p>
+        <div class="modal-actions" style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
+          <a href="#" id="modalDocLink" target="_blank" class="ops-btn-primary">OUVRIR LE DOCUMENT</a>
+          <a href="#" id="modalPdfLink" target="_blank" class="cost-log-link">Télécharger PDF</a>
+        </div>
+      </div>
+
+       <!-- ERROR STATE -->
+      <div id="modalError" class="modal-state" style="display: none;">
+         <div class="error-icon">⚠️</div>
+         <h3 class="modal-title">Erreur Critique</h3>
+         <p class="modal-desc" id="modalErrorText">Une erreur est survenue.</p>
+         <button onclick="closeModal()" class="ops-btn-secondary">FERMER</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // --- UTILS LOGS ---
     const logEl = document.getElementById('consoleLog');
@@ -739,6 +821,31 @@
       });
     });
 
+    // --- MODAL UTILS ---
+    function openModal() {
+      document.getElementById('generationModal').style.display = 'flex';
+      setModalState('loading');
+    }
+
+    function closeModal() {
+      document.getElementById('generationModal').style.display = 'none';
+    }
+
+    function setModalState(state) {
+      document.getElementById('modalLoading').style.display = 'none';
+      document.getElementById('modalSuccess').style.display = 'none';
+      document.getElementById('modalError').style.display = 'none';
+
+      if(state === 'loading') document.getElementById('modalLoading').style.display = 'flex';
+      if(state === 'success') document.getElementById('modalSuccess').style.display = 'flex';
+      if(state === 'error') document.getElementById('modalError').style.display = 'flex';
+    }
+
+    function updateModalProgress(pct, status) {
+      document.getElementById('modalProgressBar').style.width = pct + '%';
+      if(status) document.getElementById('modalStatusText').textContent = status;
+    }
+
     // --- GÉNÉRATION ---
     document.getElementById('btnGenerate').addEventListener('click', async () => {
       const btn = document.getElementById('btnGenerate');
@@ -753,6 +860,9 @@
         alert("Erreur: Titre et Entreprise requis.");
         return;
       }
+
+      openModal();
+      updateModalProgress(5, "Validation des données...");
 
       btn.disabled = true;
       btn.textContent = "⏳ GÉNÉRATION EN COURS...";
@@ -789,26 +899,37 @@
 
       if (selectedFiles.length > 0) {
         statusMain.textContent = "Upload & OCR...";
+        updateModalProgress(15, "Traitement des fichiers (OCR)...");
         progressFill.style.width = '20%';
         try {
           data.attachments = await Promise.all(selectedFiles.map(readFile));
           log(`${selectedFiles.length} fichiers encodés.`);
         } catch (e) {
           log("Erreur lecture fichier.");
+          document.getElementById('modalErrorText').textContent = "Erreur lecture fichier.";
+          setModalState('error');
           btn.disabled = false;
           return;
         }
       }
 
       statusMain.textContent = "Appel DeepSeek...";
+      updateModalProgress(30, "DeepSeek: Réflexion & Rédaction...");
       progressFill.style.width = '40%';
       let p = 40;
-      const interval = setInterval(() => { if(p<90) { p++; progressFill.style.width = p+'%'; } }, 600);
+      const interval = setInterval(() => {
+        if(p<95) {
+          p++;
+          progressFill.style.width = p+'%';
+          updateModalProgress(p, p > 80 ? "Finalisation du document..." : "Génération du contenu...");
+        }
+      }, 600);
 
       google.script.run
         .withSuccessHandler(res => {
           clearInterval(interval);
           progressFill.style.width = '100%';
+          updateModalProgress(100, "Terminé !");
           btn.disabled = false;
           btn.textContent = "✨ GÉNÉRER LA PROPALE";
 
@@ -829,11 +950,18 @@
             document.getElementById('docLink').href = res.url;
             document.getElementById('pdfLink').href = res.pdfUrl;
             resultLinks.style.display = 'grid';
+
+            // Modal Success Update
+            document.getElementById('modalDocLink').href = res.url;
+            document.getElementById('modalPdfLink').href = res.pdfUrl;
+            setModalState('success');
+
           } else {
             statusMain.textContent = "Erreur Serveur";
             statusMain.style.color = "#ff6b6b";
             log("Erreur: " + res.error);
-            alert(res.error);
+            document.getElementById('modalErrorText').textContent = res.error;
+            setModalState('error');
           }
         })
         .withFailureHandler(err => {
@@ -842,7 +970,8 @@
           btn.disabled = false;
           statusMain.textContent = "Crash Critique";
           log("Crash: " + err);
-          alert(err);
+          document.getElementById('modalErrorText').textContent = "Crash critique: " + err;
+          setModalState('error');
         })
         .generateFromForm(data);
     });
