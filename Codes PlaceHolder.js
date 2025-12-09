@@ -138,18 +138,22 @@ function callDeepSeekExpert_(form) {
 
   const systemPrompt = 
     `Tu es un consultant Senior au Pôle Services Entreprises de l'Icam. 
-    Rédige une proposition commerciale technique ("Contrat R&D").
+    Ton objectif est de transformer les notes brutes fournies par l'utilisateur en une proposition commerciale technique ("Contrat R&D") percutante et détaillée.
     
-    TON: Professionnel, expert Génie Industriel, "Excellence Opérationnelle", "Lean", "SMI".
-    Utilise le CONTEXTE DOCUMENTAIRE pour personnaliser la réponse (pas de générique).
+    INSTRUCTIONS CRITIQUES :
+    1. NE RÉPÈTE PAS SIMPLEMENT LES INPUTS. Analyse le besoin implicite et explicite.
+    2. DÉVELOPPE la solution technique : ajoute des détails pertinents en Génie Industriel, Mécanique, Électrique ou Informatique selon le sujet.
+    3. STRUCTURE la démarche de manière logique et rassurante pour le client (étapes claires).
+    4. TON : Expert, proactif, convaincant ("Excellence Opérationnelle", "Innovation", "Rigueur").
+    5. Utilise le CONTEXTE DOCUMENTAIRE pour enrichir ta réponse avec des éléments spécifiques au client.
 
     FORMAT JSON STRICT:
     {
-      "titre": "Titre impactant",
-      "contexte": "Histoire client (ADN) + Enjeux stratégiques (2 paragraphes)",
-      "demarche": "Méthodologie détaillée. Si complexe, utilise 'Sujet 1', 'Sujet 2'...",
-      "phases": "Planning macro (Phases ou Périodes)",
-      "phrase": "Conclusion inspirante"
+      "titre": "Titre professionnel et accrocheur résumant la mission",
+      "contexte": "Histoire client (ADN) + Enjeux stratégiques et problématique reformulée avec hauteur de vue (2 paragraphes riches)",
+      "demarche": "Méthodologie technique détaillée et justifiée. Explique le 'comment' et le 'pourquoi'. Si complexe, utilise 'Sujet 1', 'Sujet 2'...",
+      "phases": "Planning macro structuré (ex: Phase 1 : Cadrage, Phase 2 : Développement...)",
+      "phrase": "Conclusion inspirante et engageante pour la collaboration future"
     }`;
 
   const userPrompt = 
@@ -173,7 +177,7 @@ function callDeepSeekExpert_(form) {
         model: CONFIG.DEFAULT_MODEL,
         messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }],
         response_format: { type: "json_object" },
-        temperature: 0.6
+        temperature: 1.0
       }),
       muteHttpExceptions: true
     });
