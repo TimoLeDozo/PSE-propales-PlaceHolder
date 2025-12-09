@@ -138,19 +138,18 @@ function callDeepSeekExpert_(form) {
 
   const systemPrompt = 
     `Tu es un consultant Senior au Pôle Services Entreprises de l'Icam. 
-    Ton objectif est de transformer les notes brutes fournies par l'utilisateur en une proposition commerciale technique ("Contrat R&D") percutante et détaillée.
+    Ta mission est de RÉDIGER une proposition commerciale technique ("Contrat R&D") complète, convaincante et détaillée à partir de notes succinctes.
     
-    INSTRUCTIONS CRITIQUES :
-    1. NE RÉPÈTE PAS SIMPLEMENT LES INPUTS. Analyse le besoin implicite et explicite.
-    2. DÉVELOPPE la solution technique : ajoute des détails pertinents en Génie Industriel, Mécanique, Électrique ou Informatique selon le sujet.
-    3. STRUCTURE la démarche de manière logique et rassurante pour le client (étapes claires).
-    4. TON : Expert, proactif, convaincant ("Excellence Opérationnelle", "Innovation", "Rigueur").
-    5. Utilise le CONTEXTE DOCUMENTAIRE pour enrichir ta réponse avec des éléments spécifiques au client.
+    RÈGLES D'OR (À RESPECTER IMPÉRATIVEMENT) :
+    1. EXPANSION CRÉATIVE : Ne te contente PAS de reformuler ou de recopier les inputs. Tu dois DÉVELOPPER chaque point. Si l'utilisateur écrit "Test moteur", tu dois écrire "Protocole d'essais au banc avec acquisition de données (vibrations, température) et analyse des courbes de performance".
+    2. APPORT D'EXPERTISE : Ajoute de la valeur technique. Propose des technologies, des normes, des méthodes (ex: AMDEC, cycle en V, Agile, analyse par éléments finis) pertinentes pour le sujet, même si elles ne sont pas mentionnées dans les notes.
+    3. UTILISATION DES DOCUMENTS : Scanne le CONTEXTE DOCUMENTAIRE pour intégrer le vocabulaire, les produits et la stratégie du client dans ta rédaction. Montre que tu as compris leur métier.
+    4. TON : Professionnel, Expert, Engageant. Pas de remplissage vide, mais du contenu dense et rassurant.
 
     FORMAT JSON STRICT:
     {
       "titre": "Titre professionnel et accrocheur résumant la mission",
-      "contexte": "Histoire client (ADN) + Enjeux stratégiques et problématique reformulée avec hauteur de vue (2 paragraphes riches)",
+      "contexte": "Histoire client (ADN) + Enjeux stratégiques et problématique reformulée avec hauteur de vue (2 paragraphes riches). Ne recopie pas le texte fourni, synthétise-le en une narration.",
       "demarche": "Méthodologie technique détaillée et justifiée. Explique le 'comment' et le 'pourquoi'. Si complexe, utilise 'Sujet 1', 'Sujet 2'...",
       "phases": "Planning macro structuré (ex: Phase 1 : Cadrage, Phase 2 : Développement...)",
       "phrase": "Conclusion inspirante et engageante pour la collaboration future"
@@ -159,15 +158,17 @@ function callDeepSeekExpert_(form) {
   const userPrompt = 
     `CLIENT: ${form.entrepriseNom}
     ${contextInfo}
-    PROBLÈME: ${form.ia_probleme}
-    SOLUTION: ${form.ia_solution}
-    OBJECTIFS: ${form.ia_objectifs}
-    DURÉE: ${form.dureeProjet} (${form.dureeSemaines} semaines)
 
-    CONTEXTE DOCUMENTAIRE:
+    NOTES BRUTES (À DÉVELOPPER ET ENRICHIR) :
+    - Problème identifié : ${form.ia_probleme}
+    - Pistes de solution : ${form.ia_solution}
+    - Objectifs visés : ${form.ia_objectifs}
+    - Contrainte de temps : ${form.dureeProjet} (${form.dureeSemaines} semaines)
+
+    CONTEXTE DOCUMENTAIRE (SOURCE D'INSPIRATION) :
     ${docsContext}
     
-    Génère le JSON.`;
+    Génère le JSON de la proposition commerciale.`;
 
   try {
     const resp = UrlFetchApp.fetch("https://api.deepseek.com/v1/chat/completions", {
