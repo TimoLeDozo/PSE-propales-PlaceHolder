@@ -183,6 +183,26 @@
       transform: scale(1.05);
     }
 
+    .secondary-button {
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      color: #00ffff;
+      padding: 14px 24px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+    }
+    .secondary-button:hover {
+      background: rgba(0, 255, 255, 0.2);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+    }
+
     /* --- LAYOUT GLOBAL --- */
     main { padding-top: 140px; padding-bottom: 80px; }
     .console-section { position: relative; padding: 160px 20px 140px; }
@@ -565,6 +585,17 @@
             <div class="glass-panel">
               <div class="panel-title">🤖 Sections générées par DeepSeek</div>
               <div class="form-grid">
+
+                <!-- BOUTON DE PREVIEW (New) -->
+                <div class="field grid-span-2" style="margin-bottom: 10px;">
+                   <button type="button" id="btnPreviewIA" class="secondary-button" style="width:100%;">
+                     🧠 Pré-générer le contenu
+                   </button>
+                   <p style="font-size:0.75rem; color:rgba(255,255,255,0.4); text-align:center; margin-top:8px;">
+                     Permet de visualiser et modifier les textes avant de créer le document.
+                   </p>
+                </div>
+
                 <div class="field grid-span-2">
                   <div class="field-header">
                     <label>CONTEXTE</label>
@@ -977,6 +1008,82 @@
         })
         .generateFromForm(data);
     });
+
+    // --- PRÉ-GÉNÉRATION (PREVIEW) ---
+    document.getElementById('btnPreviewIA').addEventListener('click', async () => {
+      const btn = document.getElementById('btnPreviewIA');
+      const originalText = btn.innerHTML;
+      const entreprise = document.getElementById('f_entrepriseNom').value;
+
+      if (!entreprise) {
+        alert("Erreur: Le nom de l'entreprise est requis pour l'IA.");
+        return;
+      }
+
+      // UI Feedback
+      btn.disabled = true;
+      btn.innerHTML = '<div class="neural-spinner" style="width:20px;height:20px;border-width:2px;"></div> Réflexion en cours...';
+      addHistory("Démarrage pré-génération...");
+      log("Pré-génération (Preview) lancée...");
+
+      // Gather Data (Similaire à btnGenerate)
+      const data = {
+        titre: document.getElementById('f_titre').value,
+        entrepriseNom: entreprise,
+        // Champs IA Requis
+        ia_histoire: document.getElementById('f_ia_histoire').value,
+        ia_lieux: document.getElementById('f_ia_lieux').value,
+        ia_probleme: document.getElementById('f_ia_probleme').value,
+        ia_solution: document.getElementById('f_ia_solution').value,
+        ia_objectifs: document.getElementById('f_ia_objectifs').value,
+        dureeSemaines: document.getElementById('f_dureeSemaines').value
+      };
+
+      // Fichiers (même logique que Generate)
+      if (selectedFiles.length > 0) {
+        log("Traitement fichiers pour preview...");
+        try {
+          data.attachments = await Promise.all(selectedFiles.map(readFile));
+        } catch (e) {
+          alert("Erreur lecture fichier.");
+          btn.disabled = false;
+          btn.innerHTML = originalText;
+          return;
+        }
+      }
+
+      // Appel Backend
+      google.script.run
+        .withSuccessHandler(res => {
+          btn.disabled = false;
+          btn.innerHTML = originalText;
+
+          if (res.success) {
+            log(`Pré-génération OK. Coût: $${res.cost?.totalUsd?.toFixed(4) || 0}`);
+            addHistory("Pré-génération terminée.");
+
+            // Remplissage des champs
+            if(res.aiSections) {
+              document.getElementById('f_contexte').value = res.aiSections.contexte || "";
+              document.getElementById('f_demarche').value = res.aiSections.demarche || "";
+              document.getElementById('f_phases').value = res.aiSections.phases || "";
+              document.getElementById('f_phrase').value = res.aiSections.phrase || "";
+              if(res.aiSections.titre) document.getElementById('f_titre').value = res.aiSections.titre;
+            }
+          } else {
+            alert("Erreur IA: " + res.error);
+            log("Erreur Preview: " + res.error);
+          }
+        })
+        .withFailureHandler(err => {
+          btn.disabled = false;
+          btn.innerHTML = originalText;
+          alert("Erreur Système: " + err);
+          log("Crash Preview: " + err);
+        })
+        .previewAIContent(data);
+    });
+
   </script>
 </body>
 </html>
