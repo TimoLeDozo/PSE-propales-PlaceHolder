@@ -29,6 +29,35 @@ function doGet() {
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
+// === FONCTION DE PRÉ-GÉNÉRATION (CONTENU SEULEMENT) ===
+function previewAIContent(formData) {
+  try {
+    // Normalisation (pour assurer la cohérence du prompt)
+    if (!formData.dureeProjet) formData.dureeProjet = (formData.dureeSemaines || 24) + " semaines";
+
+    // Appel IA
+    let llmLog = { success: false };
+
+    if (formData.ia_probleme || formData.ia_solution || (formData.attachments && formData.attachments.length > 0)) {
+      llmLog = callDeepSeekExpert_(formData);
+      if (llmLog.success && llmLog.sections) {
+        return {
+          success: true,
+          aiSections: llmLog.sections,
+          cost: llmLog.cost
+        };
+      } else {
+         return { success: false, error: llmLog.error || "Aucune réponse de l'IA" };
+      }
+    } else {
+        return { success: false, error: "Champs IA vides (Problème/Solution) et aucun fichier joint." };
+    }
+  } catch (e) {
+    console.error(e);
+    return { success: false, error: e.toString() };
+  }
+}
+
 // === FONCTION PRINCIPALE (APPELÉE PAR L'UI) ===
 function generateFromForm(formData) {
   try {
@@ -45,12 +74,22 @@ function generateFromForm(formData) {
     if (!formData.codeProjet) formData.codeProjet = "DRAFT_" + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "MMdd");
     if (!formData.dureeProjet) formData.dureeProjet = (formData.dureeSemaines || 24) + " semaines";
 
-    // 2. Appel IA Expert (Logique B2 avec OCR)
+    // 2. Appel IA Expert (Logique B2 avec OCR) ou Utilisation Contenu Existant
     let aiData = {};
-    let llmLog = { success: false };
+    let llmLog = { success: true }; // Succès par défaut si pas d'appel IA
     
-    // On déclenche l'IA si on a du contenu ou des fichiers
-    if (formData.ia_probleme || formData.ia_solution || (formData.attachments && formData.attachments.length > 0)) {
+    // Si les champs clés sont déjà remplis (suite à un preview ou édition manuelle), on ne rappelle pas l'IA
+    if (formData.contexte && formData.demarche && formData.phases && formData.phrase) {
+       aiData = {
+         titre: formData.titre,
+         contexte: formData.contexte,
+         demarche: formData.demarche,
+         phases: formData.phases,
+         phrase: formData.phrase
+       };
+    }
+    // Sinon, on déclenche l'IA (Fallback)
+    else if (formData.ia_probleme || formData.ia_solution || (formData.attachments && formData.attachments.length > 0)) {
       llmLog = callDeepSeekExpert_(formData); 
       if (llmLog.success && llmLog.sections) {
         aiData = llmLog.sections;
