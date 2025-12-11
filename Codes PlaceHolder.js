@@ -185,13 +185,14 @@ function callDeepSeekExpert_(form) {
     2. APPORT D'EXPERTISE : Ajoute de la valeur technique. Propose des technologies, des normes, des méthodes (ex: AMDEC, cycle en V, Agile, analyse par éléments finis) pertinentes pour le sujet, même si elles ne sont pas mentionnées dans les notes.
     3. UTILISATION DES DOCUMENTS : Scanne le CONTEXTE DOCUMENTAIRE pour intégrer le vocabulaire, les produits et la stratégie du client dans ta rédaction. Montre que tu as compris leur métier.
     4. TON : Professionnel, Expert, Engageant. Pas de remplissage vide, mais du contenu dense et rassurant.
+    5. DENSITÉ DES PHASES : Tes phases de projet ne doivent pas être de simples titres. Elles doivent ressembler à un cahier des charges technique. Chaque phase doit prouver au client que le travail a été soigneusement préparé et chiffré.
 
     FORMAT JSON STRICT:
     {
       "titre": "Titre professionnel et accrocheur résumant la mission",
       "contexte": "Histoire client (ADN) + Enjeux stratégiques et problématique reformulée avec hauteur de vue (2 paragraphes riches). Ne recopie pas le texte fourni, synthétise-le en une narration.",
       "demarche": "Méthodologie technique détaillée et justifiée. Explique le 'comment' et le 'pourquoi'. Si complexe, utilise 'Sujet 1', 'Sujet 2'...",
-      "phases": "Planning macro structuré (ex: Phase 1 : Cadrage, Phase 2 : Développement...)",
+      "phases": "Planning détaillé et structuré phase par phase. Pour CHAQUE phase, tu DOIS impérativement inclure : 1. Un titre clair, 2. La durée estimée, 3. Les Objectifs visés, 4. Le détail des travaux techniques (bullet points), 5. Les Livrables concrets (Rapports, Plans, Prototypes, etc.). Sois dense, technique et exhaustif.",
       "phrase": "Conclusion inspirante et engageante pour la collaboration future"
     }`;
 
