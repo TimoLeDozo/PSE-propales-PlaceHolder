@@ -128,6 +128,10 @@ function generateFromForm(formData) {
 
     // 5. Remplacement (Moteur B2 Regex)
     const replaceStats = applyPlaceholders_(doc, finalData);
+
+    // 5b. Formatage Markdown & Nettoyage
+    formatMarkdownInDoc_(doc);
+
     doc.saveAndClose();
 
     // 6. Export PDF
@@ -184,7 +188,7 @@ function callDeepSeekExpert_(form) {
     1. EXPANSION CRÉATIVE : Ne te contente PAS de reformuler ou de recopier les inputs. Tu dois DÉVELOPPER chaque point. Si l'utilisateur écrit "Test moteur", tu dois écrire "Protocole d'essais au banc avec acquisition de données (vibrations, température) et analyse des courbes de performance".
     2. APPORT D'EXPERTISE : Ajoute de la valeur technique. Propose des technologies, des normes, des méthodes (ex: AMDEC, cycle en V, Agile, analyse par éléments finis) pertinentes pour le sujet, même si elles ne sont pas mentionnées dans les notes.
     3. UTILISATION DES DOCUMENTS : Scanne le CONTEXTE DOCUMENTAIRE pour intégrer le vocabulaire, les produits et la stratégie du client dans ta rédaction. Montre que tu as compris leur métier.
-    4. TON : Professionnel, Expert, Engageant. Pas de remplissage vide, mais du contenu dense et rassurant.
+    4. TON : Professionnel, Expert, Engageant. Aère le texte pour la lisibilité mais sans excès (évite les blocs trop compacts).
     5. DENSITÉ DES PHASES : Tes phases de projet ne doivent pas être de simples titres. Elles doivent ressembler à un cahier des charges technique. Chaque phase doit prouver au client que le travail a été soigneusement préparé et chiffré.
 
     FORMAT JSON STRICT:
@@ -192,7 +196,7 @@ function callDeepSeekExpert_(form) {
       "titre": "Titre professionnel et accrocheur résumant la mission",
       "contexte": "Histoire client (ADN) + Enjeux stratégiques et problématique reformulée avec hauteur de vue (2 paragraphes riches). Ne recopie pas le texte fourni, synthétise-le en une narration.",
       "demarche": "Méthodologie technique détaillée et justifiée. Explique le 'comment' et le 'pourquoi'. Si complexe, utilise 'Sujet 1', 'Sujet 2'...",
-      "phases": "Planning détaillé et structuré phase par phase. Pour CHAQUE phase, tu DOIS impérativement inclure : 1. Un titre clair, 2. La durée estimée, 3. Les Objectifs visés, 4. Le détail des travaux techniques (bullet points), 5. Les Livrables concrets (Rapports, Plans, Prototypes, etc.). Sois dense, technique et exhaustif.",
+      "phases": "Planning détaillé et structuré phase par phase. Pour CHAQUE phase, tu DOIS impérativement inclure : 1. Un titre clair, 2. La durée estimée, 3. Les Objectifs visés, 4. Le détail des travaux techniques (Utilise la clé 'Travaux techniques' et non 'Travaux_techniques', format bullet points), 5. Les Livrables concrets (Rapports, Plans, Prototypes, etc.). Sois dense, technique et exhaustif.",
       "phrase": "Conclusion inspirante et engageante pour la collaboration future"
     }`;
 
@@ -372,3 +376,66 @@ function formatDemarcheText_(t) { return t ? t.replace(/(\d+\.)/g, "\n$1").repla
 function getIcamLogoDataUrl() { /* ... B1 Logic ... */ const url="https://www.icam.fr/wp-content/uploads/2017/08/logo-icam-2.png"; try{return "data:image/png;base64,"+Utilities.base64Encode(UrlFetchApp.fetch(url).getBlob().getBytes());}catch(e){return "";}}
 function estimateAndLogCost_public(formData) { return { est: { total: 0.05, model: 'deepseek-reasoner' } }; }
 function getCostLogUrl_public() { /* ... B1 Logic ... */ }
+
+// === FORMATAGE MARKDOWN (Post-Génération) ===
+function formatMarkdownInDoc_(doc) {
+  const body = doc.getBody();
+
+  // 1. Nettoyage Titres (Travaux_techniques -> Travaux techniques)
+  body.replaceText("Travaux_techniques", "Travaux techniques");
+
+  // 2. Listes (Conversion des paragraphes commençant par - ou * en ListItem)
+  const paragraphs = body.getParagraphs();
+  // On parcourt tout, mais on ne modifie la structure que si nécessaire
+  for (let i = 0; i < paragraphs.length; i++) {
+    const p = paragraphs[i];
+    const text = p.getText();
+    if (text.match(/^[\-\*]\s+/)) {
+       const parent = p.getParent();
+       const index = parent.getChildIndex(p);
+
+       // Création du ListItem avec le texte sans le marqueur
+       const newItem = parent.insertListItem(index, text.replace(/^[\-\*]\s+/, ""));
+       newItem.setGlyphType(DocumentApp.GlyphType.BULLET);
+
+       // Suppression de l'ancien paragraphe
+       p.removeFromParent();
+    }
+  }
+
+  // 3. Gras (Conversion des **Texte** en Gras)
+  let searchResult = body.findText("\\*\\*(.*?)\\*\\*");
+  while (searchResult) {
+    const element = searchResult.getElement().asText();
+    const start = searchResult.getStartOffset();
+    const end = searchResult.getEndOffsetInclusive();
+
+    // Appliquer le gras sur tout le bloc (**Texte**)
+    element.setBold(start, end, true);
+
+    // Supprimer les marqueurs ** (Attention aux décalages d'indices)
+    // On supprime d'abord la fin pour ne pas décaler le début
+    element.deleteText(end - 1, end); // Supprime les 2 derniers caractères
+    element.deleteText(start, start + 1); // Supprime les 2 premiers caractères
+
+    // Recherche suivante
+    searchResult = body.findText("\\*\\*(.*?)\\*\\*", searchResult);
+  }
+
+  // 4. Nettoyage Espaces (Suppression des paragraphes vides multiples)
+  // On récupère les paragraphes à jour
+  const updatedParagraphs = body.getParagraphs();
+  let emptyCount = 0;
+  // Parcours inversé pour supprimer sans casser les indices
+  for (let i = updatedParagraphs.length - 1; i >= 0; i--) {
+    const p = updatedParagraphs[i];
+    if (p.getText().trim() === "") {
+      emptyCount++;
+      if (emptyCount > 1) {
+        p.removeFromParent();
+      }
+    } else {
+      emptyCount = 0;
+    }
+  }
+}
