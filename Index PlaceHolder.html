@@ -166,6 +166,10 @@
       font-weight: 700;
       font-size: 1rem;
       transition: transform 0.2s ease;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      border: none;
     }
 
     .ops-btn-secondary {
@@ -177,6 +181,10 @@
       font-size: 1rem;
       backdrop-filter: blur(10px);
       transition: background 0.2s ease;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      border: none;
     }
 
     .ops-btn-primary:hover, .ops-btn-secondary:hover {
@@ -286,6 +294,15 @@
       box-shadow: 0 22px 50px rgba(0, 0, 0, 0.55);
     }
     #btnGenerate:hover { transform: translateY(-5px); box-shadow: 0 32px 60px rgba(0, 0, 0, 0.6); }
+
+    #btnPreview {
+      background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff; border-radius: 999px; padding: 18px 34px; font-weight: 700; font-size: 0.95rem;
+      letter-spacing: 0.12em; cursor: pointer; transition: transform 0.3s ease, background 0.3s ease;
+      display: inline-flex; align-items: center; gap: 10px;
+    }
+    #btnPreview:hover { background: rgba(255, 255, 255, 0.25); transform: translateY(-3px); }
+
 
     /* --- SIDEBAR INSIGHTS --- */
     .insights-panel {
@@ -586,15 +603,7 @@
               <div class="panel-title">🤖 Sections générées par DeepSeek</div>
               <div class="form-grid">
 
-                <!-- BOUTON DE PREVIEW (New) -->
-                <div class="field grid-span-2" style="margin-bottom: 10px;">
-                   <button type="button" id="btnPreviewIA" class="secondary-button" style="width:100%;">
-                     🧠 Pré-générer le contenu
-                   </button>
-                   <p style="font-size:0.75rem; color:rgba(255,255,255,0.4); text-align:center; margin-top:8px;">
-                     Permet de visualiser et modifier les textes avant de créer le document.
-                   </p>
-                </div>
+                <!-- SUPPRIMÉ: Ancien bouton pré-génération directe -->
 
                 <div class="field grid-span-2">
                   <div class="field-header">
@@ -639,7 +648,10 @@
               </div>
               
               <div class="actions">
-                <button type="button" id="btnGenerate" class="action-buttons">✨ GÉNÉRER LA PROPALE</button>
+                <div class="action-buttons">
+                  <button type="button" id="btnPreview" class="ops-btn-secondary">🧠 Prévisualiser l'IA</button>
+                  <button type="button" id="btnGenerate" class="action-buttons">✨ GÉNÉRER LA PROPALE</button>
+                </div>
               </div>
             </div>
 
@@ -767,6 +779,43 @@
     </div>
   </div>
 
+  <!-- NOUVELLE MODALE DE PRÉVISUALISATION -->
+  <div id="previewModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content glass-panel" style="width: min(800px, 94vw); text-align: left;">
+      <button class="modal-close" onclick="closePreviewModal()">×</button>
+
+      <h3 class="modal-title" style="text-align: center; margin-bottom: 20px;">Proposition de l'IA</h3>
+
+      <div class="form-grid">
+         <div class="field grid-span-2">
+           <label>Titre</label>
+           <textarea id="p_titre" rows="1"></textarea>
+         </div>
+         <div class="field grid-span-2">
+           <label>Contexte</label>
+           <textarea id="p_contexte"></textarea>
+         </div>
+         <div class="field grid-span-2">
+           <label>Démarche</label>
+           <textarea id="p_demarche"></textarea>
+         </div>
+         <div class="field grid-span-2">
+           <label>Phases</label>
+           <textarea id="p_phases"></textarea>
+         </div>
+         <div class="field grid-span-2">
+           <label>Phrase de conclusion</label>
+           <textarea id="p_phrase" rows="2"></textarea>
+         </div>
+      </div>
+
+      <div class="actions" style="margin-top: 20px; display: flex; justify-content: center; gap: 15px;">
+         <button class="ops-btn-secondary" onclick="closePreviewModal()">❌ Revenir au brief</button>
+         <button class="ops-btn-primary" id="btnValidatePreview">✅ Valider & Intégrer</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // --- UTILS LOGS ---
     const logEl = document.getElementById('consoleLog');
@@ -853,7 +902,7 @@
       });
     });
 
-    // --- MODAL UTILS ---
+    // --- MODAL UTILS (GÉNÉRATION) ---
     function openModal() {
       document.getElementById('generationModal').style.display = 'flex';
       setModalState('loading');
@@ -879,7 +928,39 @@
       document.getElementById('modalPercentText').textContent = pct + '%';
     }
 
-    // --- GÉNÉRATION ---
+    // --- MODAL PREVIEW ---
+    function openPreviewModal(aiData) {
+      document.getElementById('previewModal').style.display = 'flex';
+      // Remplir les champs avec les données reçues
+      if (aiData) {
+         document.getElementById('p_titre').value = aiData.titre || "";
+         document.getElementById('p_contexte').value = aiData.contexte || "";
+         document.getElementById('p_demarche').value = aiData.demarche || "";
+         document.getElementById('p_phases').value = aiData.phases || "";
+         document.getElementById('p_phrase').value = aiData.phrase || "";
+      }
+    }
+
+    function closePreviewModal() {
+      document.getElementById('previewModal').style.display = 'none';
+    }
+
+    // --- ACTIONS PREVIEW ---
+    document.getElementById('btnValidatePreview').addEventListener('click', () => {
+      // Copier les valeurs vers le formulaire principal
+      document.getElementById('f_titre').value = document.getElementById('p_titre').value;
+      document.getElementById('f_contexte').value = document.getElementById('p_contexte').value;
+      document.getElementById('f_demarche').value = document.getElementById('p_demarche').value;
+      document.getElementById('f_phases').value = document.getElementById('p_phases').value;
+      document.getElementById('f_phrase').value = document.getElementById('p_phrase').value;
+
+      // Fermer la modale
+      closePreviewModal();
+      log("Contenu IA validé et intégré.");
+      addHistory("Contenu IA intégré.");
+    });
+
+    // --- GÉNÉRATION (DOC & PDF) ---
     document.getElementById('btnGenerate').addEventListener('click', async () => {
       const btn = document.getElementById('btnGenerate');
       const statusMain = document.getElementById('statusMain');
@@ -902,8 +983,8 @@
       statusMain.textContent = "Initialisation...";
       progressFill.style.width = '10%';
       resultLinks.style.display = 'none';
-      addHistory("Démarrage séquence B2...");
-      log("Préparation des données...");
+      addHistory("Création document B2...");
+      log("Préparation création PDF...");
 
       const data = {
         titre: titre,
@@ -917,13 +998,13 @@
         clientNom: document.getElementById('f_clientNom').value,
         clientFonction: document.getElementById('f_clientFonction').value,
         clientEmail: document.getElementById('f_clientEmail').value,
-        // V2 SPECIFIC
+        // V2 SPECIFIC - Données IA déjà intégrées
         ia_histoire: document.getElementById('f_ia_histoire').value,
         ia_lieux: document.getElementById('f_ia_lieux').value,
         ia_probleme: document.getElementById('f_ia_probleme').value,
         ia_solution: document.getElementById('f_ia_solution').value,
         ia_objectifs: document.getElementById('f_ia_objectifs').value,
-        // EDITABLE OUTPUTS
+        // EDITABLE OUTPUTS (Déjà remplis par preview ou main)
         contexte: document.getElementById('f_contexte').value,
         demarche: document.getElementById('f_demarche').value,
         phases: document.getElementById('f_phases').value,
@@ -931,12 +1012,12 @@
       };
 
       if (selectedFiles.length > 0) {
-        statusMain.textContent = "Upload & OCR...";
-        updateModalProgress(15, "Traitement des fichiers (OCR)...");
+        statusMain.textContent = "Upload...";
+        updateModalProgress(15, "Traitement des fichiers...");
         progressFill.style.width = '20%';
         try {
           data.attachments = await Promise.all(selectedFiles.map(readFile));
-          log(`${selectedFiles.length} fichiers encodés.`);
+          log(`${selectedFiles.length} fichiers inclus.`);
         } catch (e) {
           log("Erreur lecture fichier.");
           document.getElementById('modalErrorText').textContent = "Erreur lecture fichier.";
@@ -946,17 +1027,19 @@
         }
       }
 
-      statusMain.textContent = "Appel DeepSeek...";
-      updateModalProgress(30, "DeepSeek: Réflexion & Rédaction...");
+      statusMain.textContent = "Génération Document...";
+      updateModalProgress(30, "Création Google Doc...");
       progressFill.style.width = '40%';
+
+      // Simulation progression visuelle
       let p = 40;
       const interval = setInterval(() => {
-        if(p<95) {
+        if(p<90) {
           p++;
           progressFill.style.width = p+'%';
-          updateModalProgress(p, p > 80 ? "Finalisation du document..." : "Génération du contenu...");
+          updateModalProgress(p, "Export PDF & Finalisation...");
         }
-      }, 600);
+      }, 300);
 
       google.script.run
         .withSuccessHandler(res => {
@@ -970,15 +1053,8 @@
             statusMain.textContent = "Succès !";
             statusMain.style.color = "#00ff99";
             
-            if(res.aiSections) {
-              document.getElementById('f_contexte').value = res.aiSections.contexte || "";
-              document.getElementById('f_demarche').value = res.aiSections.demarche || "";
-              document.getElementById('f_phases').value = res.aiSections.phases || "";
-              document.getElementById('f_phrase').value = res.aiSections.phrase || "";
-            }
-
-            addHistory("Génération terminée.");
-            log(`Coût: $${res.cost?.totalUsd?.toFixed(4) || 0}`);
+            addHistory("Document créé avec succès.");
+            log("Document OK.");
             
             document.getElementById('docLink').href = res.url;
             document.getElementById('pdfLink').href = res.pdfUrl;
@@ -1006,12 +1082,12 @@
           document.getElementById('modalErrorText').textContent = "Crash critique: " + err;
           setModalState('error');
         })
-        .generateFromForm(data);
+        .generateFromForm(data); // Appelle maintenant la version sans fallback IA
     });
 
     // --- PRÉ-GÉNÉRATION (PREVIEW) ---
-    document.getElementById('btnPreviewIA').addEventListener('click', async () => {
-      const btn = document.getElementById('btnPreviewIA');
+    document.getElementById('btnPreview').addEventListener('click', async () => {
+      const btn = document.getElementById('btnPreview');
       const originalText = btn.innerHTML;
       const entreprise = document.getElementById('f_entrepriseNom').value;
 
@@ -1022,11 +1098,11 @@
 
       // UI Feedback
       btn.disabled = true;
-      btn.innerHTML = '<div class="neural-spinner" style="width:20px;height:20px;border-width:2px;"></div> Réflexion en cours...';
-      addHistory("Démarrage pré-génération...");
+      btn.innerHTML = '<div class="neural-spinner" style="width:20px;height:20px;border-width:2px;"></div> Réflexion...';
+      addHistory("Démarrage pré-génération (Preview)...");
       log("Pré-génération (Preview) lancée...");
 
-      // Gather Data (Similaire à btnGenerate)
+      // Gather Data
       const data = {
         titre: document.getElementById('f_titre').value,
         entrepriseNom: entreprise,
@@ -1039,9 +1115,9 @@
         dureeSemaines: document.getElementById('f_dureeSemaines').value
       };
 
-      // Fichiers (même logique que Generate)
+      // Fichiers
       if (selectedFiles.length > 0) {
-        log("Traitement fichiers pour preview...");
+        log("Inclusion fichiers pour preview...");
         try {
           data.attachments = await Promise.all(selectedFiles.map(readFile));
         } catch (e) {
@@ -1059,17 +1135,12 @@
           btn.innerHTML = originalText;
 
           if (res.success) {
-            log(`Pré-génération OK. Coût: $${res.cost?.totalUsd?.toFixed(4) || 0}`);
-            addHistory("Pré-génération terminée.");
+            log(`Preview reçue. Coût: $${res.cost?.totalUsd?.toFixed(4) || 0}`);
+            addHistory("Proposition IA reçue.");
 
-            // Remplissage des champs
-            if(res.aiSections) {
-              document.getElementById('f_contexte').value = res.aiSections.contexte || "";
-              document.getElementById('f_demarche').value = res.aiSections.demarche || "";
-              document.getElementById('f_phases').value = res.aiSections.phases || "";
-              document.getElementById('f_phrase').value = res.aiSections.phrase || "";
-              if(res.aiSections.titre) document.getElementById('f_titre').value = res.aiSections.titre;
-            }
+            // Ouvrir la modale avec les résultats
+            openPreviewModal(res.aiSections);
+
           } else {
             alert("Erreur IA: " + res.error);
             log("Erreur Preview: " + res.error);

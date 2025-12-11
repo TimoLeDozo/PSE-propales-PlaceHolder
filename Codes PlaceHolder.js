@@ -30,6 +30,7 @@ function doGet() {
 }
 
 // === FONCTION DE PRÉ-GÉNÉRATION (CONTENU SEULEMENT) ===
+// Expose la fonction pour le frontend (Workflow Preview)
 function previewAIContent(formData) {
   try {
     // Normalisation (pour assurer la cohérence du prompt)
@@ -88,13 +89,13 @@ function generateFromForm(formData) {
          phrase: formData.phrase
        };
     }
-    // Sinon, on déclenche l'IA (Fallback)
-    else if (formData.ia_probleme || formData.ia_solution || (formData.attachments && formData.attachments.length > 0)) {
+    // Sinon, on déclenche l'IA (Fallback) - DÉSACTIVÉ (Workflow Preview Obligatoire)
+    /* else if (formData.ia_probleme || formData.ia_solution || (formData.attachments && formData.attachments.length > 0)) {
       llmLog = callDeepSeekExpert_(formData); 
       if (llmLog.success && llmLog.sections) {
         aiData = llmLog.sections;
       }
-    }
+    } */
 
     // 3. Préparation des données pour le Template (Mapping B2)
     const rawData = { ...formData, ...aiData };
