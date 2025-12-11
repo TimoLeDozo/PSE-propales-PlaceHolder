@@ -777,7 +777,7 @@
          <div class="error-icon">⚠️</div>
          <h3 class="modal-title">Erreur Critique</h3>
          <p class="modal-desc" id="modalErrorText">Une erreur est survenue.</p>
-         <button onclick="closeModal()" class="ops-btn-secondary">FERMER</button>
+         <button id="btnCloseModal" onclick="closeModal()" class="ops-btn-secondary">FERMER</button>
       </div>
     </div>
   </div>
@@ -929,6 +929,27 @@
       document.getElementById('modalProgressBar').style.width = pct + '%';
       if(status) document.getElementById('modalStatusText').textContent = status;
       document.getElementById('modalPercentText').textContent = pct + '%';
+    }
+
+    function showModal(title, message, progress) {
+      const modal = document.getElementById('generationModal');
+      modal.style.display = 'flex';
+
+      if (title.includes('Erreur') || title.includes('Error')) {
+        setModalState('error');
+        const titleEl = document.querySelector('#modalError .modal-title');
+        if(titleEl) titleEl.textContent = title;
+        document.getElementById('modalErrorText').textContent = message;
+      } else {
+        setModalState('loading');
+        const titleEl = document.querySelector('#modalLoading .modal-title');
+        if(titleEl) titleEl.textContent = title;
+        updateModalProgress(progress, message);
+      }
+    }
+
+    function hideModal() {
+      closeModal();
     }
 
     // --- MODAL PREVIEW ---
@@ -1107,7 +1128,6 @@
     // --- PRÉ-GÉNÉRATION (PREVIEW) ---
     document.getElementById('btnPreview').addEventListener('click', async () => {
       const btn = document.getElementById('btnPreview');
-      const originalText = btn.innerHTML;
       const entreprise = document.getElementById('f_entrepriseNom').value;
 
       if (!entreprise) {
@@ -1115,9 +1135,21 @@
         return;
       }
 
-      // UI Feedback
-      btn.disabled = true;
-      btn.innerHTML = '<div class="neural-spinner" style="width:20px;height:20px;border-width:2px;"></div> Réflexion...';
+      // Initialisation Modale
+      showModal('🧠 Neural Engine', 'Analyse du contexte et rédaction...', 0);
+
+      // Timer Simulation
+      let progress = 0;
+      const timer = setInterval(() => {
+        // Vitesse : 90% en 40s (soit environ +2.25% par seconde)
+        // On update tous les 200ms => +0.45%
+        if (progress < 90) {
+          progress += 0.45;
+          // Arrondi pour affichage propre
+          updateModalProgress(Math.min(90, Math.round(progress)), 'Analyse du contexte et rédaction...');
+        }
+      }, 200);
+
       addHistory("Démarrage pré-génération (Preview)...");
       log("Pré-génération (Preview) lancée...");
 
@@ -1140,9 +1172,8 @@
         try {
           data.attachments = await Promise.all(selectedFiles.map(readFile));
         } catch (e) {
-          alert("Erreur lecture fichier.");
-          btn.disabled = false;
-          btn.innerHTML = originalText;
+          clearInterval(timer);
+          showModal('❌ Erreur', "Erreur lecture fichier.", 100);
           return;
         }
       }
@@ -1150,25 +1181,28 @@
       // Appel Backend
       google.script.run
         .withSuccessHandler(res => {
-          btn.disabled = false;
-          btn.innerHTML = originalText;
+          clearInterval(timer);
 
           if (res.success) {
-            log(`Preview reçue. Coût: $${res.cost?.totalUsd?.toFixed(4) || 0}`);
-            addHistory("Proposition IA reçue.");
+             // Force barre 100%
+             showModal('Terminé', 'Génération réussie !', 100);
 
-            // Ouvrir la modale avec les résultats
-            openPreviewModal(res.aiSections);
+             // Délai visuel puis ouverture preview
+             setTimeout(() => {
+                hideModal();
+                log(`Preview reçue. Coût: $${res.cost?.totalUsd?.toFixed(4) || 0}`);
+                addHistory("Proposition IA reçue.");
+                openPreviewModal(res.aiSections);
+             }, 500);
 
           } else {
-            alert("Erreur IA: " + res.error);
+            showModal('❌ Erreur', res.error, 100);
             log("Erreur Preview: " + res.error);
           }
         })
         .withFailureHandler(err => {
-          btn.disabled = false;
-          btn.innerHTML = originalText;
-          alert("Erreur Système: " + err);
+          clearInterval(timer);
+          showModal('❌ Erreur', err.message || err, 100);
           log("Crash Preview: " + err);
         })
         .previewAIContent(data);
