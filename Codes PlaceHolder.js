@@ -229,6 +229,14 @@ function callDeepSeekExpert_(form) {
     
     const content = json.choices[0].message.content;
     const sections = JSON.parse(content.replace(/```json|```/g, "")); 
+
+    // Normalisation des champs pour éviter [object Object]
+    ['phases', 'demarche'].forEach(key => {
+      if (sections[key] && typeof sections[key] === 'object') {
+        sections[key] = formatComplexSection_(sections[key]);
+      }
+    });
+
     const cost = ((json.usage.prompt_tokens * 0.14) + (json.usage.completion_tokens * 2.19)) / 1000000;
 
     return { success: true, sections: sections, content: content, usage: json.usage, cost: { totalUsd: cost }, model: CONFIG.DEFAULT_MODEL };
@@ -333,6 +341,30 @@ function safeMoveFileToFolder_(fileId, folderId) {
     const file = DriveApp.getFileById(fileId);
     file.moveTo(DriveApp.getFolderById(folderId));
   } catch(e) {}
+}
+
+function formatComplexSection_(data) {
+  if (typeof data === 'string') return data;
+  if (data === null || data === undefined) return "";
+
+  if (Array.isArray(data)) {
+    const isSimpleList = data.every(i => typeof i === 'string' || typeof i === 'number');
+    if (isSimpleList) return data.map(i => "- " + i).join("\n");
+    return data.map(item => formatComplexSection_(item)).join("\n\n");
+  }
+
+  if (typeof data === 'object') {
+    return Object.keys(data).map(k => {
+      const keyName = k.charAt(0).toUpperCase() + k.slice(1).replace(/([A-Z])/g, ' $1').trim();
+      const val = data[k];
+      let formattedVal = formatComplexSection_(val);
+      if (Array.isArray(val) || (typeof val === 'object' && val !== null)) {
+         return `**${keyName}** :\n${formattedVal}`;
+      }
+      return `**${keyName}** : ${formattedVal}`;
+    }).join("\n");
+  }
+  return String(data);
 }
 
 function escapeRegex_(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
