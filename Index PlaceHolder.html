@@ -1012,6 +1012,19 @@
       };
 
       if (selectedFiles.length > 0) {
+        // --- VÉRIFICATION TAILLE FICHIERS ---
+        const totalSize = selectedFiles.reduce((acc, file) => acc + file.size, 0);
+        if (totalSize > 5 * 1024 * 1024) { // 5 Mo
+          alert("Le volume total des fichiers dépasse 5 Mo (Limite technique Google). Veuillez réduire le nombre ou la taille des pièces jointes.");
+
+          // Réinitialisation état
+          btn.disabled = false;
+          btn.textContent = "✨ GÉNÉRER LA PROPALE";
+          closeModal();
+          return;
+        }
+        // ------------------------------------
+
         statusMain.textContent = "Upload...";
         updateModalProgress(15, "Traitement des fichiers...");
         progressFill.style.width = '20%';
