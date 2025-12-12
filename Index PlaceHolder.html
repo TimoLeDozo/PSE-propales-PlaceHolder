@@ -784,7 +784,7 @@
 
   <!-- NOUVELLE MODALE DE PRÉVISUALISATION -->
   <div id="previewModal" class="modal-overlay" style="display: none;">
-    <div class="modal-content glass-panel" style="width: min(800px, 94vw); text-align: left;">
+    <div class="modal-content glass-panel" style="width: min(800px, 94vw); text-align: left; max-height: 90vh; overflow-y: auto;">
       <button class="modal-close" onclick="closePreviewModal()">×</button>
 
       <h3 class="modal-title" style="text-align: center; margin-bottom: 20px;">Proposition de l'IA</h3>
@@ -1040,6 +1040,8 @@
 
       if (selectedFiles.length > 0) {
         // --- VÉRIFICATION TAILLE FICHIERS ---
+        // Limite désactivée à la demande de l'utilisateur
+        /*
         const totalSize = selectedFiles.reduce((acc, file) => acc + file.size, 0);
         if (totalSize > 5 * 1024 * 1024) { // 5 Mo
           alert("Le volume total des fichiers dépasse 5 Mo (Limite technique Google). Veuillez réduire le nombre ou la taille des pièces jointes.");
@@ -1050,6 +1052,7 @@
           closeModal();
           return;
         }
+        */
         // ------------------------------------
 
         statusMain.textContent = "Upload...";
