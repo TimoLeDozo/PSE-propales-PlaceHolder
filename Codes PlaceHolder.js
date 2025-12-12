@@ -378,86 +378,78 @@ function estimateAndLogCost_public(formData) { return { est: { total: 0.05, mode
 function getCostLogUrl_public() { /* ... B1 Logic ... */ }
 
 // === FORMATAGE MARKDOWN (Post-Génération) ===
-function cleanAndFormatDoc_(doc) { // Remplace formatMarkdownInDoc_
+function cleanAndFormatDoc_(doc) {
   const body = doc.getBody();
 
   // Étape 1 - Nettoyage global (ReplaceText)
   body.replaceText("Travaux_techniques", "Travaux techniques");
   body.replaceText("Travaux techniques:", "Travaux techniques\u00A0:"); // espace insécable
-  // Supprimer ### ou ## en début de ligne
-  // Utilisation de regex multi-ligne pour les entêtes Markdown
-  // (?m) active le mode multi-ligne où ^ correspond au début de ligne
-  body.replaceText("(?m)^#{2,3}\\s*", "");
+  body.replaceText("(?m)^#{2,3}\\s*", ""); // Supprimer ### ou ##
 
   // Étape 2 - Traitement du Gras (Markdown **)
   let searchResult = body.findText("\\*\\*(.*?)\\*\\*");
   while (searchResult) {
-    const element = searchResult.getElement().asText();
-    const start = searchResult.getStartOffset();
-    const end = searchResult.getEndOffsetInclusive();
+    const element = searchResult.getElement();
+    if (element.getType() === DocumentApp.ElementType.TEXT) {
+      const textObj = element.asText();
+      const start = searchResult.getStartOffset();
+      const end = searchResult.getEndOffsetInclusive();
 
-    // Mettre en gras la partie entre les astérisques
-    // Les astérisques sont aux indices [start, start+1] et [end-1, end]
-    // Le texte à mettre en gras est donc de start+2 à end-2
-    if (end - start > 3) {
-      element.setBold(start + 2, end - 2, true);
+      // Mettre en gras entre les astérisques
+      if (end - start >= 4) {
+         textObj.setBold(start + 2, end - 2, true);
+      }
+
+      // Supprimer les ** (attention : suppression de la fin puis du début)
+      textObj.deleteText(end - 1, end);
+      textObj.deleteText(start, start + 1);
     }
-
-    // Supprimer physiquement les caractères ** avant et après
-    // On supprime d'abord la fin pour préserver les indices du début
-    element.deleteText(end - 1, end); // Supprime les 2 derniers chars
-    element.deleteText(start, start + 1); // Supprime les 2 premiers chars
-
-    // Recherche suivante
-    // Comme on a supprimé les marqueurs **, le motif n'existe plus à cet endroit.
-    // On peut relancer la recherche depuis le début pour trouver l'occurrence suivante.
     searchResult = body.findText("\\*\\*(.*?)\\*\\*");
   }
 
   // Étape 3 - Conversion des Listes
   const paragraphs = body.getParagraphs();
-  // We must iterate backwards or be careful with indices if we replace elements
-  // But since we are replacing p with a ListItem in place (conceptually), iterating normally is risky if getParagraphs returns a live list that changes.
-  // Actually, inserting a ListItem changes the structure.
-  // It is safer to iterate backwards or store references?
-  // Let's iterate normally but be careful. getParagraphs returns a snapshot array in GAS usually?
-  // Actually, best practice is to handle the replacement carefully.
-
   for (let i = 0; i < paragraphs.length; i++) {
     const p = paragraphs[i];
     const text = p.getText();
-    // Si un paragraphe commence par - ou * (tiret/étoile suivi d'espace)
+
+    // Si commence par - ou *
     if (text.startsWith("- ") || text.startsWith("* ")) {
-       const parent = p.getParent();
-       const index = parent.getChildIndex(p);
+      const parent = p.getParent();
+      const childIndex = parent.getChildIndex(p);
 
-       // Création du ListItem avec le texte sans le marqueur
-       // On retire les 2 premiers caractères ("- ")
-       const newText = text.substring(2);
+      // Insérer un ListItem
+      // On copie les enfants pour préserver le gras (généré à l'étape 2)
+      const listItem = parent.insertListItem(childIndex, "");
+      if (listItem.getNumChildren() > 0) listItem.getChild(0).removeFromParent(); // Nettoyage initial
 
-       // Insérer un ListItem
-       const newItem = parent.insertListItem(index, newText);
-       newItem.setGlyphType(DocumentApp.GlyphType.BULLET);
+      const numChildren = p.getNumChildren();
+      for (let k = 0; k < numChildren; k++) {
+        const child = p.getChild(k).copy();
+        listItem.appendChild(child);
+      }
 
-       // Copier les attributs si nécessaire (optionnel, mais propre)
-       newItem.setAttributes(p.getAttributes());
+      // Supprimer le marqueur "- " ou "* " dans le premier élément texte
+      if (listItem.getNumChildren() > 0) {
+        const firstChild = listItem.getChild(0);
+        if (firstChild.getType() === DocumentApp.ElementType.TEXT) {
+           // Supprimer les 2 premiers caractères
+           firstChild.asText().deleteText(0, 1);
+        }
+      }
 
-       // Suppression de l'ancien paragraphe
-       p.removeFromParent();
+      listItem.setGlyphType(DocumentApp.GlyphType.BULLET);
+      p.removeFromParent();
     }
   }
 
-  // Étape 4 - Suppression des sauts de ligne vides
-  // On récupère les paragraphes à nouveau car la structure a changé (ListItems)
-  const updatedParagraphs = body.getParagraphs();
-  // Parcourir les paragraphes à l'envers (de la fin vers le début)
-  for (let i = updatedParagraphs.length - 1; i > 0; i--) {
-    const current = updatedParagraphs[i];
-    const prev = updatedParagraphs[i-1];
-
-    // Si un paragraphe est vide ET que le paragraphe précédent est aussi vide
+  // Étape 4 - Suppression des sauts de ligne vides (Redondants)
+  // On récupère les paragraphes à jour
+  const finalParagraphs = body.getParagraphs();
+  for (let i = finalParagraphs.length - 1; i > 0; i--) {
+    const current = finalParagraphs[i];
+    const prev = finalParagraphs[i-1];
     if (current.getText().trim() === "" && prev.getText().trim() === "") {
-      // Supprimer le paragraphe courant
       current.removeFromParent();
     }
   }
