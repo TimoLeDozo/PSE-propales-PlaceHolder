@@ -179,6 +179,7 @@ function callDeepSeekExpert_(form) {
   let contextInfo = "";
   if (form.ia_histoire) contextInfo += `\n- Histoire/ADN: ${form.ia_histoire}`;
   if (form.ia_lieux) contextInfo += `\n- Lieux (Départ/Arrivée): ${form.ia_lieux}`;
+  if (form.thematique) contextInfo += `\n- Thématique du projet: ${form.thematique}`;
 
   const systemPrompt = 
     `Tu es un consultant Senior au Pôle Services Entreprises de l'Icam. 

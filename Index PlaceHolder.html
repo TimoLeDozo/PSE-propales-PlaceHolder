@@ -496,6 +496,10 @@
                   <label for="f_titre">TITRE *</label>
                   <input type="text" id="f_titre" placeholder="Optimisation flux entrepôt" required>
                 </div>
+                <div class="field grid-span-2">
+                  <label for="f_thematique">THÉMATIQUE</label>
+                  <input type="text" id="f_thematique" placeholder="Ex: Logistique, Développement web, Mécanique..." >
+                </div>
                 <div class="field">
                   <label for="f_codeProjet">CODE PROJET</label>
                   <input type="text" id="f_codeProjet" placeholder="144-16">
@@ -1015,6 +1019,7 @@
 
       const data = {
         titre: titre,
+        thematique: document.getElementById('f_thematique').value,
         entrepriseNom: entreprise,
         codeProjet: document.getElementById('f_codeProjet').value,
         dateDebut: document.getElementById('f_dateDebut').value,
@@ -1159,6 +1164,7 @@
       // Gather Data
       const data = {
         titre: document.getElementById('f_titre').value,
+        thematique: document.getElementById('f_thematique').value,
         entrepriseNom: entreprise,
         // Champs IA Requis
         ia_histoire: document.getElementById('f_ia_histoire').value,
