@@ -71,7 +71,22 @@ function generateFromForm(formData) {
     const budgetFormatted = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(totalBudget);
     
     // Normalisation des dates/codes
-    if (!formData.dateDebut) formData.dateDebut = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "MMMM yyyy");
+    if (!formData.dateDebut) {
+       formData.dateDebut = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "MMMM yyyy");
+    } else {
+       // Conversion du format YYYY-MM-DD (Input Date) vers Format Français "15 septembre 2025"
+       try {
+         const parts = formData.dateDebut.split('-'); // 2025-09-15
+         if (parts.length === 3) {
+           const d = new Date(parts[0], parts[1] - 1, parts[2]);
+           const months = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+           formData.dateDebut = `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+         }
+       } catch (e) {
+         // Fallback si erreur de parsing (on garde la valeur brute)
+       }
+    }
+
     if (!formData.codeProjet) formData.codeProjet = "DRAFT_" + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "MMdd");
     if (!formData.dureeProjet) formData.dureeProjet = (formData.dureeSemaines || 24) + " semaines";
 
